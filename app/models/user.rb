@@ -2,7 +2,8 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :jwt_authenticatable, jwt_revocation_strategy: self
 
   before_create :generate_jti
 
@@ -15,6 +16,14 @@ class User < ApplicationRecord
             }
 
   enum :role, { user: "user", admin: "admin" }
+
+  def self.jwt_revoked?(payload, user)
+    payload["jti"] != user.jti
+  end
+
+  def self.revoke_jwt(payload, user)
+    user.update!(jti: SecureRandom.uuid)
+  end
 
   private
 
