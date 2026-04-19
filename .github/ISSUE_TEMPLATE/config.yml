@@ -1,0 +1,6 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Documentação do Projeto
+    url: https://github.com/miguelcoelho22/PEGUFLA
+    about: Consulte os documentos do projeto antes de abrir uma issue.
