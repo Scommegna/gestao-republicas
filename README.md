@@ -1,6 +1,19 @@
 # 🏠 Gestão Financeira de Repúblicas
 
+[![CI](https://github.com/Scommegna/gestao-republicas/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Scommegna/gestao-republicas/actions/workflows/ci.yml)
+![Cobertura mínima 70% no app](https://img.shields.io/badge/cobertura-%E2%89%A570%25%20(linhas)-brightgreen)
+
 Sistema web desenvolvido para auxiliar no **controle financeiro de repúblicas estudantis**, permitindo organizar despesas coletivas e calcular automaticamente os valores devidos por cada morador com base nos gastos totais da casa.
+
+**CI:** [`/.github/workflows/ci.yml`](.github/workflows/ci.yml) executa Brakeman, Bundler Audit, Importmap audit, RuboCop e **RSpec com SimpleCov** (mínimo **70%** de cobertura de linhas em `app/`).
+
+Rodar testes com relatório de cobertura localmente:
+
+```bash
+COVERAGE=true CI=true bundle exec rspec
+```
+
+Abrir o relatório HTML: `coverage/index.html`.
 
 ---
 

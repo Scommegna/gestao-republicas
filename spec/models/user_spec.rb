@@ -121,6 +121,34 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe ".jwt_revoked?" do
+    let(:user) { create(:user) }
+
+    it "returns false when payload jti matches the user" do
+      payload = { "jti" => user.jti }
+
+      expect(described_class.jwt_revoked?(payload, user)).to be false
+    end
+
+    it "returns true when payload jti does not match" do
+      payload = { "jti" => SecureRandom.uuid }
+
+      expect(described_class.jwt_revoked?(payload, user)).to be true
+    end
+  end
+
+  describe ".revoke_jwt" do
+    let(:user) { create(:user) }
+
+    it "rotates jti so existing tokens become invalid" do
+      previous = user.jti
+
+      described_class.revoke_jwt({}, user)
+
+      expect(user.reload.jti).not_to eq(previous)
+    end
+  end
+
   describe 'devise modules' do
     it 'responds to valid_password?' do
       expect(user).to respond_to(:valid_password?)
