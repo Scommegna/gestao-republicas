@@ -30,7 +30,7 @@ Com isso, o sistema permitirá:
 
 - Lucas Scommegna
 - Alexandre Marques Spinola Cardoso
-- ANdré Araújo Mendonça
+- André Araújo Mendonça
 - Gustavo do Carmo Resende
 
 ---
@@ -41,6 +41,8 @@ Com isso, o sistema permitirá:
 - Ruby on Rails
 - Docker
 - HTML / CSS / JavaScript
+- Bootstrap
+- Node.js
 - SQLite
 
 ---
@@ -53,6 +55,8 @@ Instalar:
 
 - Ruby
 - Ruby on Rails
+- Node.js
+- npm
 - Git
 - Docker
 
@@ -83,6 +87,32 @@ Verificar:
 rails -v
 ```
 
+## Instalar Node.js e NPM
+
+```bash
+sudo apt update
+sudo apt install nodejs npm
+```
+
+Verificar:
+
+```bash
+node -v
+npm -v
+```
+
+## Instalar Yarn
+
+```bash
+npm install -g yarn
+```
+
+Verificar:
+
+```bash
+yarn -v
+```
+
 ## Clonar o projeto
 
 ```bash
@@ -93,6 +123,12 @@ git clone git@github.com:Scommegna/gestao-republicas.git
 
 ```bash
 cd gestao-republicas
+```
+
+## Rodar setup
+
+```bash
+bin/setup
 ```
 
 ## Rodar o servidor
