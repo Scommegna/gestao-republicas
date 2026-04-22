@@ -8,6 +8,9 @@ Rails.application.routes.draw do
                 sign_up: "register"
               }
 
+  # Repúblicas: rotas sempre registradas; o controller exige login (redirect 302).
+  resources :republicas
+
   authenticated :user do
     root "home#index", as: :authenticated_root
   end

@@ -1,0 +1,32 @@
+<%= form_with model: republica, local: true do |f| %>
+  <% if republica.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <strong><%= pluralize(republica.errors.count, "erro") %> impediu <%= republica.persisted? ? "a atualização" : "o cadastro" %>:</strong>
+      <ul class="mb-0 mt-2">
+        <% republica.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :name, "Nome da república", class: "form-label" %>
+    <%= f.text_field :name, class: "form-control", required: true, autofocus: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :endereco, "Endereço", class: "form-label" %>
+    <%= f.text_field :endereco, class: "form-control", placeholder: "Opcional" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :descricao, "Descrição", class: "form-label" %>
+    <%= f.text_area :descricao, class: "form-control", rows: 4, placeholder: "Opcional — regras da casa, número de vagas, etc." %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit republica.persisted? ? "Salvar alterações" : "Cadastrar república", class: "btn btn-success" %>
+    <%= link_to "Cancelar", republica.persisted? ? republica_path(republica) : republicas_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

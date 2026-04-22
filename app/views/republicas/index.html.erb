@@ -1,0 +1,33 @@
+<% content_for :title, "Repúblicas" %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h1 class="h3 mb-0">Minhas repúblicas</h1>
+    <%= link_to "Nova república", new_republica_path, class: "btn btn-success" %>
+  </div>
+
+  <% if @republicas.any? %>
+    <div class="list-group">
+      <% @republicas.each do |rep| %>
+        <%= link_to republica_path(rep), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-start" do %>
+          <div>
+            <span class="fw-semibold"><%= rep.name %></span>
+            <% if rep.endereco.present? %>
+              <div class="small text-muted"><%= rep.endereco %></div>
+            <% end %>
+          </div>
+          <span class="badge text-bg-secondary rounded-pill">ver</span>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      Você ainda não cadastrou nenhuma república.
+      <%= link_to "Criar a primeira", new_republica_path, class: "alert-link" %>.
+    </div>
+  <% end %>
+
+  <p class="mt-4 mb-0">
+    <%= link_to "← Voltar ao início", authenticated_root_path, class: "link-secondary" %>
+  </p>
+</div>
