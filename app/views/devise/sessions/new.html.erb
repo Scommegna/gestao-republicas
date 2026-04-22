@@ -1,26 +1,296 @@
-<h2>Log in</h2>
+<%# app/views/devise/sessions/new.html.erb %>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap');
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+  :root {
+    --verde:    #2D6A4F;
+    --verde-md: #40916C;
+    --verde-lt: #B7E4C7;
+    --creme:    #F8F4EE;
+    --terra:    #6B4226;
+    --texto:    #1A1A1A;
+    --cinza:    #6B7280;
+  }
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <p><%= f.password_field :password, autocomplete: "current-password" %></p>
-  </div>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <p><%= f.check_box :remember_me %></p>
-      <p><%= f.label :remember_me %></p>
+  body.devise-sessions {
+    min-height: 100vh;
+    background-color: var(--creme);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image:
+      radial-gradient(ellipse 60% 50% at 10% 20%, rgba(45,106,79,.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(64,145,108,.07) 0%, transparent 70%);
+    padding: 2rem 1rem;
+  }
+
+  .auth-wrapper {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* ---- logo / marca ---- */
+  .auth-brand {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .auth-brand .brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--verde);
+    border-radius: 16px;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 16px rgba(45,106,79,.25);
+  }
+
+  .auth-brand .brand-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .auth-brand h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--texto);
+    line-height: 1.2;
+  }
+
+  .auth-brand p {
+    font-size: .875rem;
+    color: var(--cinza);
+    margin-top: .35rem;
+  }
+
+  /* ---- card ---- */
+  .auth-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2.25rem;
+    box-shadow:
+      0 1px 3px rgba(0,0,0,.04),
+      0 8px 32px rgba(0,0,0,.07);
+    border: 1px solid rgba(0,0,0,.055);
+  }
+
+  .auth-card h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 1.6rem;
+    color: var(--texto);
+    margin-bottom: 1.75rem;
+  }
+
+  /* ---- erros Devise ---- */
+  .auth-errors {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: .85rem;
+    color: #B91C1C;
+  }
+
+  .auth-errors ul { padding-left: 1.1rem; }
+  .auth-errors li { margin-top: .2rem; }
+
+  /* ---- grupo de campo ---- */
+  .field-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--cinza);
+    margin-bottom: .45rem;
+  }
+
+  .field-group input[type="email"],
+  .field-group input[type="password"],
+  .field-group input[type="text"] {
+    width: 100%;
+    padding: .7rem .95rem;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    color: var(--texto);
+    background: #FAFAFA;
+    transition: border-color .18s, box-shadow .18s, background .18s;
+    outline: none;
+  }
+
+  .field-group input:focus {
+    border-color: var(--verde-md);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(64,145,108,.12);
+  }
+
+  /* ---- remember me ---- */
+  .remember-row {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .remember-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--verde);
+    cursor: pointer;
+  }
+
+  .remember-row label {
+    font-size: .875rem;
+    color: var(--cinza);
+    cursor: pointer;
+  }
+
+  /* ---- botão principal ---- */
+  .btn-primary-auth {
+    display: block;
+    width: 100%;
+    padding: .8rem;
+    background: var(--verde);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .18s, transform .12s, box-shadow .18s;
+    box-shadow: 0 2px 8px rgba(45,106,79,.25);
+  }
+
+  .btn-primary-auth:hover {
+    background: var(--verde-md);
+    box-shadow: 0 4px 16px rgba(45,106,79,.3);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary-auth:active {
+    transform: translateY(0);
+  }
+
+  /* ---- links de rodapé ---- */
+  .auth-links {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .6rem;
+    font-size: .875rem;
+  }
+
+  .auth-links a {
+    color: var(--verde);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color .15s;
+  }
+
+  .auth-links a:hover {
+    color: var(--verde-md);
+    text-decoration: underline;
+  }
+
+  .auth-links .divider {
+    color: #D1D5DB;
+  }
+
+  .auth-links .row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .auth-links .muted {
+    color: var(--cinza);
+  }
+</style>
+
+<body class="devise-sessions">
+  <div class="auth-wrapper">
+
+    <%# Marca / logo %>
+    <div class="auth-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <h1>Gestão de Repúblicas</h1>
+      <p>Controle financeiro da sua república</p>
     </div>
-  <% end %>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
+    <%# Card de login %>
+    <div class="auth-card">
+      <h2>Entrar</h2>
+
+      <%# Mensagens de erro do Devise %>
+      <% if resource.errors.any? %>
+        <div class="auth-errors">
+          <strong><%= pluralize(resource.errors.count, "erro") %> encontrado<%= resource.errors.count > 1 ? "s" : "" %>:</strong>
+          <ul>
+            <% resource.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+
+        <div class="field-group">
+          <%= f.label :email, "E-mail" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+        </div>
+
+        <div class="field-group">
+          <%= f.label :password, "Senha" %>
+          <%= f.password_field :password, autocomplete: "current-password" %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="remember-row">
+            <%= f.check_box :remember_me %>
+            <%= f.label :remember_me, "Lembrar de mim" %>
+          </div>
+        <% end %>
+
+        <%= f.submit "Entrar", class: "btn-primary-auth" %>
+
+      <% end %>
+
+      <div class="auth-links">
+        <div class="row">
+          <span class="muted">Ainda não tem conta?</span>
+          <%= link_to "Criar conta", new_registration_path(resource_name) %>
+        </div>
+        <%= link_to "Esqueceu sua senha?", new_password_path(resource_name) %>
+      </div>
+    </div>
+
   </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</body>
