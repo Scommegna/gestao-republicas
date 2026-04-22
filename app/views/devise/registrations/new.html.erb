@@ -1,46 +1,337 @@
-<h2>Criar Conta</h2>
+<%# app/views/devise/registrations/new.html.erb %>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap');
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  :root {
+    --verde:    #2D6A4F;
+    --verde-md: #40916C;
+    --verde-lt: #B7E4C7;
+    --creme:    #F8F4EE;
+    --terra:    #6B4226;
+    --texto:    #1A1A1A;
+    --cinza:    #6B7280;
+  }
 
-  <div>
-    <%= f.label :first_name, "Nome" %><br>
-    <%= f.text_field :first_name %>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body.devise-registrations {
+    min-height: 100vh;
+    background-color: var(--creme);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-image:
+      radial-gradient(ellipse 60% 50% at 10% 20%, rgba(45,106,79,.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(64,145,108,.07) 0%, transparent 70%);
+    padding: 2.5rem 1rem;
+  }
+
+  .auth-wrapper {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  /* ---- marca ---- */
+  .auth-brand {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth-brand .brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--verde);
+    border-radius: 16px;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 16px rgba(45,106,79,.25);
+  }
+
+  .auth-brand .brand-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .auth-brand h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--texto);
+  }
+
+  .auth-brand p {
+    font-size: .875rem;
+    color: var(--cinza);
+    margin-top: .35rem;
+  }
+
+  /* ---- card ---- */
+  .auth-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2.25rem;
+    box-shadow:
+      0 1px 3px rgba(0,0,0,.04),
+      0 8px 32px rgba(0,0,0,.07);
+    border: 1px solid rgba(0,0,0,.055);
+  }
+
+  .auth-card h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 1.6rem;
+    color: var(--texto);
+    margin-bottom: 1.75rem;
+  }
+
+  /* ---- erros ---- */
+  .auth-errors {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 10px;
+    padding: .85rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: .85rem;
+    color: #B91C1C;
+  }
+
+  .auth-errors ul { padding-left: 1.1rem; }
+  .auth-errors li { margin-top: .2rem; }
+
+  /* ---- grade de 2 colunas ---- */
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+  }
+
+  .fields-grid .field-group.full {
+    grid-column: 1 / -1;
+  }
+
+  /* ---- campo ---- */
+  .field-group {
+    margin-bottom: 1.15rem;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--cinza);
+    margin-bottom: .4rem;
+  }
+
+  .field-group input[type="email"],
+  .field-group input[type="password"],
+  .field-group input[type="text"] {
+    width: 100%;
+    padding: .68rem .9rem;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .92rem;
+    color: var(--texto);
+    background: #FAFAFA;
+    transition: border-color .18s, box-shadow .18s, background .18s;
+    outline: none;
+  }
+
+  .field-group input:focus {
+    border-color: var(--verde-md);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(64,145,108,.12);
+  }
+
+  /* ---- dica de campo ---- */
+  .field-hint {
+    font-size: .75rem;
+    color: #9CA3AF;
+    margin-top: .3rem;
+  }
+
+  /* ---- divisor de seção ---- */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin: 1.5rem 0 1.25rem;
+    color: #D1D5DB;
+    font-size: .78rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--cinza);
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #E5E7EB;
+  }
+
+  /* ---- botão ---- */
+  .btn-primary-auth {
+    display: block;
+    width: 100%;
+    padding: .82rem;
+    background: var(--verde);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 1.75rem;
+    transition: background .18s, transform .12s, box-shadow .18s;
+    box-shadow: 0 2px 8px rgba(45,106,79,.25);
+  }
+
+  .btn-primary-auth:hover {
+    background: var(--verde-md);
+    box-shadow: 0 4px 16px rgba(45,106,79,.3);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary-auth:active {
+    transform: translateY(0);
+  }
+
+  /* ---- links rodapé ---- */
+  .auth-links {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: .875rem;
+  }
+
+  .auth-links .muted { color: var(--cinza); }
+
+  .auth-links a {
+    color: var(--verde);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color .15s;
+  }
+
+  .auth-links a:hover {
+    color: var(--verde-md);
+    text-decoration: underline;
+  }
+
+  /* ---- responsivo ---- */
+  @media (max-width: 480px) {
+    .fields-grid {
+      grid-template-columns: 1fr;
+    }
+    .fields-grid .field-group.full {
+      grid-column: 1;
+    }
+    .auth-card {
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>
+
+<body class="devise-registrations">
+  <div class="auth-wrapper">
+
+    <%# Marca %>
+    <div class="auth-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <h1>Gestão de Repúblicas</h1>
+      <p>Crie sua conta e comece a organizar as finanças</p>
+    </div>
+
+    <div class="auth-card">
+      <h2>Criar Conta</h2>
+
+      <% if resource.errors.any? %>
+        <div class="auth-errors">
+          <strong><%= pluralize(resource.errors.count, "erro") %> encontrado<%= resource.errors.count > 1 ? "s" : "" %>:</strong>
+          <ul>
+            <% resource.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+
+        <%# Dados pessoais %>
+        <div class="fields-grid">
+          <div class="field-group">
+            <%= f.label :first_name, "Nome" %>
+            <%= f.text_field :first_name, autocomplete: "given-name" %>
+          </div>
+
+          <div class="field-group">
+            <%= f.label :last_name, "Sobrenome" %>
+            <%= f.text_field :last_name, autocomplete: "family-name" %>
+          </div>
+
+          <div class="field-group">
+            <%= f.label :phone, "Telefone" %>
+            <%= f.text_field :phone, placeholder: "35999999999", autocomplete: "tel" %>
+            <p class="field-hint">Somente números: DDD + número</p>
+          </div>
+
+          <div class="field-group">
+            <%= f.label :document, "CPF" %>
+            <%= f.text_field :document, placeholder: "12345678901", autocomplete: "off" %>
+            <p class="field-hint">Somente números, sem pontos</p>
+          </div>
+        </div>
+
+        <div class="section-divider">Acesso</div>
+
+        <div class="field-group">
+          <%= f.label :email, "E-mail" %>
+          <%= f.email_field :email, autocomplete: "email" %>
+        </div>
+
+        <div class="fields-grid">
+          <div class="field-group">
+            <%= f.label :password, "Senha" %>
+            <%= f.password_field :password, autocomplete: "new-password" %>
+            <% if @minimum_password_length %>
+              <p class="field-hint">Mínimo de <%= @minimum_password_length %> caracteres</p>
+            <% end %>
+          </div>
+
+          <div class="field-group">
+            <%= f.label :password_confirmation, "Confirmar senha" %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+          </div>
+        </div>
+
+        <%= f.submit "Criar conta", class: "btn-primary-auth" %>
+
+      <% end %>
+
+      <div class="auth-links">
+        <span class="muted">Já tem uma conta?</span>
+        <%= link_to " Fazer login", new_session_path(resource_name) %>
+      </div>
+    </div>
+
   </div>
-
-  <div>
-    <%= f.label :last_name, "Sobrenome" %><br>
-    <%= f.text_field :last_name %>
-  </div>
-
-  <div>
-    <%= f.label :phone, "Telefone" %><br>
-    <%= f.text_field :phone %>
-  </div>
-
-  <div>
-    <%= f.label :document, "Documento" %><br>
-    <%= f.text_field :document %>
-  </div>
-
-  <div>
-    <%= f.label :email, "E-mail" %><br>
-    <%= f.email_field :email %>
-  </div>
-
-  <div>
-    <%= f.label :password, "Senha" %><br>
-    <%= f.password_field :password %>
-  </div>
-
-  <div>
-    <%= f.label :password_confirmation, "Confirmar senha" %><br>
-    <%= f.password_field :password_confirmation %>
-  </div>
-
-  <div>
-    <%= f.submit "Cadastrar" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</body>
