@@ -7,23 +7,25 @@
     --verde-md: #40916C;
     --verde-lt: #B7E4C7;
     --creme:    #F8F4EE;
-    --terra:    #6B4226;
     --texto:    #1A1A1A;
     --cinza:    #6B7280;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body.devise-registrations {
-    min-height: 100vh;
+  body {
     background-color: var(--creme);
-    font-family: 'DM Sans', sans-serif;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
     background-image:
       radial-gradient(ellipse 60% 50% at 10% 20%, rgba(45,106,79,.08) 0%, transparent 70%),
       radial-gradient(ellipse 50% 60% at 90% 80%, rgba(64,145,108,.07) 0%, transparent 70%);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .auth-layout {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
     padding: 2.5rem 1rem;
   }
 
@@ -32,7 +34,6 @@
     max-width: 480px;
   }
 
-  /* ---- marca ---- */
   .auth-brand {
     text-align: center;
     margin-bottom: 2rem;
@@ -74,7 +75,6 @@
     margin-top: .35rem;
   }
 
-  /* ---- card ---- */
   .auth-card {
     background: #fff;
     border-radius: 20px;
@@ -93,7 +93,6 @@
     margin-bottom: 1.75rem;
   }
 
-  /* ---- erros ---- */
   .auth-errors {
     background: #FEF2F2;
     border: 1px solid #FECACA;
@@ -107,7 +106,6 @@
   .auth-errors ul { padding-left: 1.1rem; }
   .auth-errors li { margin-top: .2rem; }
 
-  /* ---- grade de 2 colunas ---- */
   .fields-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -118,10 +116,7 @@
     grid-column: 1 / -1;
   }
 
-  /* ---- campo ---- */
-  .field-group {
-    margin-bottom: 1.15rem;
-  }
+  .field-group { margin-bottom: 1.15rem; }
 
   .field-group label {
     display: block;
@@ -154,20 +149,17 @@
     box-shadow: 0 0 0 3px rgba(64,145,108,.12);
   }
 
-  /* ---- dica de campo ---- */
   .field-hint {
     font-size: .75rem;
     color: #9CA3AF;
     margin-top: .3rem;
   }
 
-  /* ---- divisor de seção ---- */
   .section-divider {
     display: flex;
     align-items: center;
     gap: .75rem;
     margin: 1.5rem 0 1.25rem;
-    color: #D1D5DB;
     font-size: .78rem;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -182,7 +174,6 @@
     background: #E5E7EB;
   }
 
-  /* ---- botão ---- */
   .btn-primary-auth {
     display: block;
     width: 100%;
@@ -206,11 +197,8 @@
     transform: translateY(-1px);
   }
 
-  .btn-primary-auth:active {
-    transform: translateY(0);
-  }
+  .btn-primary-auth:active { transform: translateY(0); }
 
-  /* ---- links rodapé ---- */
   .auth-links {
     margin-top: 1.5rem;
     text-align: center;
@@ -231,24 +219,16 @@
     text-decoration: underline;
   }
 
-  /* ---- responsivo ---- */
   @media (max-width: 480px) {
-    .fields-grid {
-      grid-template-columns: 1fr;
-    }
-    .fields-grid .field-group.full {
-      grid-column: 1;
-    }
-    .auth-card {
-      padding: 2rem 1.5rem;
-    }
+    .fields-grid { grid-template-columns: 1fr; }
+    .fields-grid .field-group.full { grid-column: 1; }
+    .auth-card { padding: 2rem 1.5rem; }
   }
 </style>
 
-<body class="devise-registrations">
+<main class="auth-layout devise-registrations">
   <div class="auth-wrapper">
 
-    <%# Marca %>
     <div class="auth-brand">
       <div class="brand-icon">
         <svg viewBox="0 0 24 24">
@@ -276,7 +256,6 @@
 
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-        <%# Dados pessoais %>
         <div class="fields-grid">
           <div class="field-group">
             <%= f.label :first_name, "Nome" %>
@@ -334,4 +313,4 @@
     </div>
 
   </div>
-</body>
+</main>

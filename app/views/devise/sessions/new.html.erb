@@ -7,23 +7,25 @@
     --verde-md: #40916C;
     --verde-lt: #B7E4C7;
     --creme:    #F8F4EE;
-    --terra:    #6B4226;
     --texto:    #1A1A1A;
     --cinza:    #6B7280;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body.devise-sessions {
-    min-height: 100vh;
+  body {
     background-color: var(--creme);
-    font-family: 'DM Sans', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background-image:
       radial-gradient(ellipse 60% 50% at 10% 20%, rgba(45,106,79,.08) 0%, transparent 70%),
       radial-gradient(ellipse 50% 60% at 90% 80%, rgba(64,145,108,.07) 0%, transparent 70%);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .auth-layout {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 2rem 1rem;
   }
 
@@ -32,7 +34,6 @@
     max-width: 420px;
   }
 
-  /* ---- logo / marca ---- */
   .auth-brand {
     text-align: center;
     margin-bottom: 2.5rem;
@@ -75,7 +76,6 @@
     margin-top: .35rem;
   }
 
-  /* ---- card ---- */
   .auth-card {
     background: #fff;
     border-radius: 20px;
@@ -94,7 +94,6 @@
     margin-bottom: 1.75rem;
   }
 
-  /* ---- erros Devise ---- */
   .auth-errors {
     background: #FEF2F2;
     border: 1px solid #FECACA;
@@ -108,10 +107,7 @@
   .auth-errors ul { padding-left: 1.1rem; }
   .auth-errors li { margin-top: .2rem; }
 
-  /* ---- grupo de campo ---- */
-  .field-group {
-    margin-bottom: 1.25rem;
-  }
+  .field-group { margin-bottom: 1.25rem; }
 
   .field-group label {
     display: block;
@@ -144,7 +140,6 @@
     box-shadow: 0 0 0 3px rgba(64,145,108,.12);
   }
 
-  /* ---- remember me ---- */
   .remember-row {
     display: flex;
     align-items: center;
@@ -165,7 +160,6 @@
     cursor: pointer;
   }
 
-  /* ---- botão principal ---- */
   .btn-primary-auth {
     display: block;
     width: 100%;
@@ -188,11 +182,8 @@
     transform: translateY(-1px);
   }
 
-  .btn-primary-auth:active {
-    transform: translateY(0);
-  }
+  .btn-primary-auth:active { transform: translateY(0); }
 
-  /* ---- links de rodapé ---- */
   .auth-links {
     margin-top: 1.5rem;
     display: flex;
@@ -214,25 +205,18 @@
     text-decoration: underline;
   }
 
-  .auth-links .divider {
-    color: #D1D5DB;
-  }
-
   .auth-links .row {
     display: flex;
     align-items: center;
     gap: .5rem;
   }
 
-  .auth-links .muted {
-    color: var(--cinza);
-  }
+  .auth-links .muted { color: var(--cinza); }
 </style>
 
-<body class="devise-sessions">
+<main class="auth-layout devise-sessions">
   <div class="auth-wrapper">
 
-    <%# Marca / logo %>
     <div class="auth-brand">
       <div class="brand-icon">
         <svg viewBox="0 0 24 24">
@@ -244,11 +228,9 @@
       <p>Controle financeiro da sua república</p>
     </div>
 
-    <%# Card de login %>
     <div class="auth-card">
       <h2>Entrar</h2>
 
-      <%# Mensagens de erro do Devise %>
       <% if resource.errors.any? %>
         <div class="auth-errors">
           <strong><%= pluralize(resource.errors.count, "erro") %> encontrado<%= resource.errors.count > 1 ? "s" : "" %>:</strong>
@@ -293,4 +275,4 @@
     </div>
 
   </div>
-</body>
+</main>
