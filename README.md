@@ -46,6 +46,13 @@ Com isso, o sistema permitirá:
 - André Araújo Mendonça
 - Gustavo do Carmo Resende
 
+## Responsabilidades (Sprint 1)
+
+- **Lucas Scommegna**: setup inicial do projeto e autenticação (Devise), estrutura base (home/rotas), Bootstrap e ajustes de setup.
+- **Gustavo do Carmo Resende**: estilização das telas de autenticação (login/cadastro/recuperação de senha).
+- **André Araújo Mendonça**: CI (GitHub Actions) com suíte RSpec e qualidade (SimpleCov, specs de autenticação); implementação da US03 (CRUD de república) com testes.
+- **Alexandre Marques Spinola Cardoso**: implementação do cadastro/listagem/edição de moradores (residents) com rotas/views e testes (PR #10).
+
 ---
 
 # 3. 🛠️ Tecnologias Utilizadas
