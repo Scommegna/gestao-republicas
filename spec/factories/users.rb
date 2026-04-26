@@ -5,7 +5,7 @@ FactoryBot.define do
     first_name { Faker::Name.first_name }
     last_name  { Faker::Name.last_name }
     document   { Faker::Number.unique.number(digits: 11).to_s }
-    phone      { "35999999999" }
+    sequence(:phone) { |n| "3599999#{n.to_s.rjust(4, '0')}" }
     email      { Faker::Internet.unique.email }
     password   { "123456" }
     password_confirmation { "123456" }

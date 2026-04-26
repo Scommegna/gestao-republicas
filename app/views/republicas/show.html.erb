@@ -24,7 +24,8 @@
     </div>
   <% end %>
 
-  <p class="mb-0">
-    <%= link_to "← Lista de repúblicas", republicas_path, class: "link-secondary" %>
-  </p>
+ <div class="d-flex gap-2 mt-3">
+    <%= link_to "Ver Moradores", republica_residents_path(@republica), class: "btn btn-info" %>
+    <%= link_to "← Lista de repúblicas", republicas_path, class: "btn btn-secondary" %>
+  </div>
 </div>
