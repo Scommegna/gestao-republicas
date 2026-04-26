@@ -1,0 +1,30 @@
+<% content_for :title, @republica.name %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1"><%= @republica.name %></h1>
+      <% if @republica.endereco.present? %>
+        <p class="text-muted mb-0"><%= @republica.endereco %></p>
+      <% end %>
+    </div>
+    <div class="btn-group">
+      <%= link_to "Editar", edit_republica_path(@republica), class: "btn btn-outline-primary btn-sm" %>
+      <%= button_to "Excluir", republica_path(@republica), method: :delete, class: "btn btn-outline-danger btn-sm",
+            form: { data: { turbo_confirm: "Tem certeza que deseja excluir esta república?" } } %>
+    </div>
+  </div>
+
+  <% if @republica.descricao.present? %>
+    <div class="card mb-4">
+      <div class="card-body">
+        <h2 class="h6 text-muted">Descrição</h2>
+        <p class="card-text mb-0"><%= simple_format(@republica.descricao) %></p>
+      </div>
+    </div>
+  <% end %>
+
+  <p class="mb-0">
+    <%= link_to "← Lista de repúblicas", republicas_path, class: "link-secondary" %>
+  </p>
+</div>

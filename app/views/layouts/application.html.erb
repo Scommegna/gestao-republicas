@@ -24,6 +24,14 @@
   </head>
 
   <body>
+    <% flash.each do |type, msg| %>
+      <% css = type.to_s == "notice" ? "success" : "danger" %>
+      <% next if msg.blank? %>
+      <div class="alert alert-<%= css %> alert-dismissible fade show rounded-0 mb-0" role="alert">
+        <%= msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+      </div>
+    <% end %>
     <%= yield %>
   </body>
 </html>
