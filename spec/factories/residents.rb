@@ -4,5 +4,6 @@ FactoryBot.define do
     email { Faker::Internet.email }
     sequence(:phone) { |n| "3599999#{n.to_s.rjust(4, '0')}" }
     republica
+    active { true }
   end
 end

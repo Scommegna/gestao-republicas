@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   # Repúblicas: rotas sempre registradas; o controller exige login (redirect 302).
   resources :republicas do
     resources :residents, except: [ :show ]
+    resources :despesas
   end
 
   authenticated :user do

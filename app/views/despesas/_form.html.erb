@@ -1,0 +1,46 @@
+<%= form_with model: [ @republica, @despesa ], class: "row g-3" do |form| %>
+  <% if @despesa.errors.any? %>
+    <div class="col-12">
+      <div class="alert alert-danger">
+        <p class="mb-1 fw-semibold"><%= pluralize(@despesa.errors.count, "erro") %> impediram o salvamento:</p>
+        <ul class="mb-0">
+          <% @despesa.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="col-12">
+    <%= form.label :descricao, "Descrição", class: "form-label" %>
+    <%= form.text_field :descricao, class: "form-control", required: true %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :valor, "Valor (R$)", class: "form-label" %>
+    <%= form.number_field :valor, class: "form-control", step: "0.01", min: "0.01", required: true %>
+  </div>
+
+  <div class="col-md-6">
+    <%= form.label :vencimento, "Vencimento", class: "form-label" %>
+    <%= form.date_field :vencimento, class: "form-control", required: true %>
+  </div>
+
+  <div class="col-12">
+    <%= form.label :categoria, "Categoria", class: "form-label" %>
+    <%= form.select :categoria,
+          options_for_select(
+            Despesa::CATEGORIAS.map { |c| [ Despesa::CATEGORIA_LABELS[c], c ] },
+            @despesa.categoria
+          ),
+          { include_blank: "Selecione…" },
+          class: "form-select",
+          required: true %>
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <%= form.submit class: "btn btn-success" %>
+    <%= link_to "Cancelar", republica_despesas_path(@republica), class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
