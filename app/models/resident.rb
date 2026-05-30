@@ -1,6 +1,8 @@
 class Resident < ApplicationRecord
   belongs_to :republica
 
+  scope :active, -> { where(active: true) }
+
   validates :name, presence: true
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :email, uniqueness: { scope: :republica_id, message: "já cadastrado nesta república" }

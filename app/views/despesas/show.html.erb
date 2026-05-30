@@ -1,0 +1,46 @@
+<% content_for :title, @despesa.descricao %>
+
+<div class="container py-4">
+  <p class="text-muted small mb-1">
+    <%= link_to @republica.name, republica_path(@republica), class: "link-secondary" %> /
+    <%= link_to "Despesas", republica_despesas_path(@republica), class: "link-secondary" %>
+  </p>
+
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+    <h1 class="h3 mb-0"><%= @despesa.descricao %></h1>
+    <div class="btn-group">
+      <%= link_to "Editar", edit_republica_despesa_path(@republica, @despesa), class: "btn btn-outline-primary btn-sm" %>
+      <%= button_to "Excluir", republica_despesa_path(@republica, @despesa), method: :delete, class: "btn btn-outline-danger btn-sm",
+            form: { data: { turbo_confirm: "Excluir esta despesa?" } } %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-sm-4">Categoria</dt>
+        <dd class="col-sm-8"><%= @despesa.categoria_label %></dd>
+
+        <dt class="col-sm-4">Valor total</dt>
+        <dd class="col-sm-8"><%= number_to_currency(@despesa.valor) %></dd>
+
+        <dt class="col-sm-4">Vencimento</dt>
+        <dd class="col-sm-8"><%= @despesa.vencimento.strftime("%d/%m/%Y") %></dd>
+
+        <dt class="col-sm-4">Valor por morador ativo</dt>
+        <dd class="col-sm-8">
+          <% if @despesa.valor_por_morador %>
+            <%= number_to_currency(@despesa.valor_por_morador) %>
+            <span class="text-muted small">(<%= @republica.residents.active.count %> morador(es))</span>
+          <% else %>
+            <span class="text-muted">Cadastre moradores ativos para calcular a divisão.</span>
+          <% end %>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <p class="mt-4 mb-0">
+    <%= link_to "← Lista de despesas", republica_despesas_path(@republica), class: "link-secondary" %>
+  </p>
+</div>

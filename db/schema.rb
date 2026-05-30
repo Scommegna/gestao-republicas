@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_22_161516) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_04_120001) do
+  create_table "despesas", force: :cascade do |t|
+    t.string "categoria", null: false
+    t.datetime "created_at", null: false
+    t.string "descricao", null: false
+    t.integer "republica_id", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "valor", precision: 10, scale: 2, null: false
+    t.date "vencimento", null: false
+    t.index ["republica_id"], name: "index_despesas_on_republica_id"
+  end
+
   create_table "republicas", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "descricao"
@@ -22,6 +33,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_161516) do
   end
 
   create_table "residents", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.string "email"
     t.string "name"
@@ -52,6 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_161516) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "despesas", "republicas"
   add_foreign_key "republicas", "users"
   add_foreign_key "residents", "republicas"
 end
