@@ -44,3 +44,5 @@
 
 /.bundle/
 /vendor/bundle/
+.agents
+.codex
