@@ -1,0 +1,36 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Moradores — <%= @republica.name %></h2>
+    <%= link_to "Novo Morador", new_republica_resident_path(@republica), class: "btn btn-primary" %>
+  </div>
+
+  <% if @residents.any? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @residents.each do |resident| %>
+          <tr>
+            <td><%= resident.name %></td>
+            <td><%= resident.email %></td>
+            <td><%= resident.phone %></td>
+            <td>
+              <%= link_to "Editar", edit_republica_resident_path(@republica, resident), class: "btn btn-sm btn-warning" %>
+              <%= button_to "Remover", republica_resident_path(@republica, resident), method: :delete, class: "btn btn-sm btn-danger", data: { turbo_confirm: "Tem certeza?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">Nenhum morador cadastrado ainda.</div>
+  <% end %>
+
+  <%= link_to "← Voltar para a república", @republica, class: "btn btn-secondary mt-2" %>
+</div>

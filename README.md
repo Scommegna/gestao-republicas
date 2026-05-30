@@ -39,12 +39,14 @@ Com isso, o sistema permitirá:
 
 ---
 
-# 2. 👥 Integrantes
+# 2. 👥 Integrantes e Responsabilidades
 
-- Lucas Scommegna
-- Alexandre Marques Spinola Cardoso
-- André Araújo Mendonça
-- Gustavo do Carmo Resende
+| Integrante | Responsabilidades |
+|---|---|
+| Lucas Scommegna | Configuração do repositório, CI/CD, autenticação (Devise/JWT), estrutura inicial do projeto |
+| Alexandre Marques Spinola Cardoso | US04 — Cadastro de moradores (CRUD de residents vinculados a repúblicas, testes) |
+| André Araújo Mendonça | US03 — Cadastro de repúblicas (CRUD completo com telas e testes) |
+| Gustavo do Carmo Resende | US02 — Estilização das telas de login e cadastro |
 
 ---
 
