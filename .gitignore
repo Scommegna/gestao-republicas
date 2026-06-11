@@ -41,3 +41,8 @@
 
 # SimpleCov (local HTML report)
 /coverage
+
+/.bundle/
+/vendor/bundle/
+.agents
+.codex

@@ -1,5 +1,22 @@
 # Run using bin/ci
 
+if Dir.home && !File.writable?(Dir.home)
+  require "fileutils"
+
+  ci_home = File.expand_path("../tmp/ci-home", __dir__)
+  FileUtils.mkdir_p(ci_home)
+
+  ENV["HOME"] = ci_home
+  ENV["XDG_CACHE_HOME"] ||= File.join(ci_home, ".cache")
+  ENV["XDG_CONFIG_HOME"] ||= File.join(ci_home, ".config")
+  ENV["XDG_DATA_HOME"] ||= File.join(ci_home, ".local", "share")
+  ENV["GEM_SPEC_CACHE"] ||= File.join(ci_home, ".cache", "gem", "specs")
+  ENV["BUNDLE_USER_HOME"] ||= File.join(ci_home, ".bundle")
+  ENV["BUNDLE_USER_CACHE"] ||= File.join(ci_home, ".bundle", "cache")
+  ENV["BUNDLE_USER_CONFIG"] ||= File.join(ci_home, ".bundle", "config")
+  ENV["YARN_CACHE_FOLDER"] ||= File.join(ci_home, ".cache", "yarn")
+end
+
 CI.run do
   step "Setup", "bin/setup --skip-server"
 

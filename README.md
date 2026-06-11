@@ -5,15 +5,7 @@
 
 Sistema web desenvolvido para auxiliar no **controle financeiro de repúblicas estudantis**, permitindo organizar despesas coletivas e calcular automaticamente os valores devidos por cada morador com base nos gastos totais da casa.
 
-**CI:** [`/.github/workflows/ci.yml`](.github/workflows/ci.yml) executa Brakeman, Bundler Audit, Importmap audit, RuboCop e **RSpec com SimpleCov** (mínimo **70%** de cobertura de linhas em `app/`).
-
-Rodar testes com relatório de cobertura localmente:
-
-```bash
-COVERAGE=true CI=true bundle exec rspec
-```
-
-Abrir o relatório HTML: `coverage/index.html`.
+**CI:** [`/.github/workflows/ci.yml`](.github/workflows/ci.yml) executa Brakeman, Bundler Audit, Importmap audit, RuboCop e **RSpec com SimpleCov** (mínimo **70%** de cobertura de linhas em `app/`). Os comandos de instalação, Docker e testes estão na seção "Instalação e Execução".
 
 ---
 
@@ -69,97 +61,198 @@ Com isso, o sistema permitirá:
 
 ---
 
-# 4. 🚀 Instruções de Instalação
+# 4. 🚀 Instalação e Execução
+
+O projeto pode ser executado com Docker, sem instalar Ruby, Rails, Node.js ou SQLite diretamente na máquina. Para desenvolvimento local sem Docker, veja a seção "Execução sem Docker".
 
 ## Pré-requisitos
 
-Instalar:
-
-- Ruby
-- Ruby on Rails
-- Node.js
-- npm
 - Git
-- Docker
+- Docker Engine ou Docker Desktop
+- Docker Compose v2, disponível pelo comando `docker compose`
 
----
+## Instalar Docker
 
-## Instalar Ruby (Linux Ubuntu/Debian)
+### Ubuntu/Debian
+
+Siga a documentação oficial do Docker para instalar o Docker Engine pelo repositório `apt`:
+
+- https://docs.docker.com/engine/install/ubuntu/
+
+Depois da instalação, verifique:
 
 ```bash
-sudo apt update
-sudo apt install ruby-full
+docker --version
+docker compose version
 ```
 
-Verificar:
+Opcionalmente, para executar Docker sem `sudo`, siga o pós-instalação oficial:
+
+- https://docs.docker.com/engine/install/linux-postinstall/
+
+### Windows e macOS
+
+Instale o Docker Desktop pela documentação oficial:
+
+- Windows: https://docs.docker.com/desktop/setup/install/windows-install/
+- macOS: https://docs.docker.com/desktop/setup/install/mac-install/
+
+Depois de abrir o Docker Desktop, verifique no terminal:
 
 ```bash
-ruby -v
-```
-
-## Instalar Ruby On Rails
-
-```bash
-gem install rails
-```
-
-Verificar:
-
-```bash
-rails -v
-```
-
-## Instalar Node.js e NPM
-
-```bash
-sudo apt update
-sudo apt install nodejs npm
-```
-
-Verificar:
-
-```bash
-node -v
-npm -v
-```
-
-## Instalar Yarn
-
-```bash
-npm install -g yarn
-```
-
-Verificar:
-
-```bash
-yarn -v
+docker --version
+docker compose version
 ```
 
 ## Clonar o projeto
 
 ```bash
 git clone git@github.com:Scommegna/gestao-republicas.git
-```
-
-## Ir para a pasta
-
-```bash
 cd gestao-republicas
 ```
 
-## Rodar setup
+## Build da imagem Docker
+
+```bash
+docker compose build
+```
+
+Também é possível construir a imagem diretamente pelo Docker:
+
+```bash
+docker build -t gestao-republicas .
+```
+
+## Subir a aplicação com Docker Compose
+
+```bash
+docker compose up
+```
+
+Para executar em segundo plano:
+
+```bash
+docker compose up -d
+```
+
+Acesse no navegador:
+
+```bash
+http://localhost:3000
+```
+
+O serviço `web` roda a aplicação Rails em modo `production` dentro do container e expõe a porta interna `80` na porta local `3000`.
+
+## Comandos úteis com Docker
+
+Ver logs:
+
+```bash
+docker compose logs -f web
+```
+
+Parar os containers:
+
+```bash
+docker compose down
+```
+
+Abrir um shell no container:
+
+```bash
+docker compose run --rm web bash
+```
+
+Abrir o console Rails:
+
+```bash
+docker compose run --rm web bin/rails console
+```
+
+Executar migrações/preparar banco manualmente:
+
+```bash
+docker compose run --rm web bin/rails db:prepare
+```
+
+Remover containers e o volume com o banco/arquivos persistidos:
+
+```bash
+docker compose down -v
+```
+
+## Rodar testes
+
+### Com Docker
+
+Com a imagem já construída, execute:
+
+```bash
+docker compose run --rm \
+  -e RAILS_ENV=test \
+  -e COVERAGE=true \
+  -e CI=true \
+  web bundle exec rspec
+```
+
+Para preparar explicitamente o banco de teste antes da suíte:
+
+```bash
+docker compose run --rm \
+  -e RAILS_ENV=test \
+  web bin/rails db:test:prepare
+```
+
+### Sem Docker
+
+Instale as dependências locais do projeto:
+
+```bash
+bin/setup --skip-server
+```
+
+Execute a suíte RSpec com cobertura:
+
+```bash
+COVERAGE=true CI=true bundle exec rspec
+```
+
+Abrir o relatório HTML: `coverage/index.html`.
+
+## Qualidade e segurança
+
+Comandos usados no CI:
+
+```bash
+bin/rubocop
+bin/brakeman --no-pager
+bin/bundler-audit
+bin/importmap audit
+```
+
+Para rodar todos os checks locais em sequência:
+
+```bash
+bin/ci
+```
+
+## Execução sem Docker
+
+Caso prefira desenvolver diretamente na máquina, instale Ruby, Rails, Node.js, npm/yarn e SQLite compatíveis com o projeto. Depois rode:
 
 ```bash
 bin/setup
 ```
 
-## Rodar o servidor
+O `bin/setup` instala dependências, prepara o banco e inicia o servidor de desenvolvimento via `bin/dev`.
+
+Se quiser iniciar manualmente depois:
 
 ```bash
-bin/rails server
+bin/dev
 ```
 
-Acesse no navegador:
+Acesse:
 
 ```bash
 http://localhost:3000
