@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   resources :republicas do
     resources :residents, except: [ :show ]
     resources :despesas
+    resources :pagamentos, only: [ :index, :create, :update ]
   end
 
   authenticated :user do

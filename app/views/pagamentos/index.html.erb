@@ -1,0 +1,155 @@
+<% content_for :title, "Pagamentos — #{@republica.name}" %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div>
+      <p class="text-muted small mb-1"><%= link_to @republica.name, republica_path(@republica), class: "link-secondary" %></p>
+      <h1 class="h3 mb-1">Controle de pagamentos</h1>
+      <p class="text-muted mb-0">Acompanhe as cotas pagas e pendentes por morador.</p>
+    </div>
+    <%= form_with url: republica_pagamentos_path(@republica), method: :get, class: "row gy-2 gx-2 align-items-end" do |form| %>
+      <div class="col-auto">
+        <%= form.label :month, "Mês", class: "form-label small mb-1" %>
+        <%= form.number_field :month, value: @month, min: 1, max: 12, class: "form-control form-control-sm" %>
+      </div>
+      <div class="col-auto">
+        <%= form.label :year, "Ano", class: "form-label small mb-1" %>
+        <%= form.number_field :year, value: @year, min: 2000, class: "form-control form-control-sm" %>
+      </div>
+      <div class="col-auto">
+        <%= form.submit "Filtrar", class: "btn btn-outline-primary btn-sm" %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @despesas.none? || @residents.none? %>
+    <div class="alert alert-info">
+      Cadastre moradores ativos e despesas com vencimento no período para calcular pagamentos.
+    </div>
+  <% end %>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-muted">Total devido</h2>
+          <p class="h4 mb-0"><%= number_to_currency(@total_due) %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-muted">Total pago</h2>
+          <p class="h4 mb-0"><%= number_to_currency(@total_paid) %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-muted">Total pendente</h2>
+          <p class="h4 mb-0"><%= number_to_currency(@total_pending) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-5">
+      <h2 class="h5 mb-3">Registrar pagamento</h2>
+      <%= form_with model: [ @republica, @pagamento ], class: "row g-3" do |form| %>
+        <% if @pagamento.errors.any? %>
+          <div class="col-12">
+            <div class="alert alert-danger">
+              <p class="mb-1 fw-semibold"><%= pluralize(@pagamento.errors.count, "erro") %> impediram o registro:</p>
+              <ul class="mb-0">
+                <% @pagamento.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="col-12">
+          <%= form.label :resident_id, "Morador", class: "form-label" %>
+          <%= form.collection_select :resident_id, @residents, :id, :name, { prompt: "Selecione" }, class: "form-select", required: true %>
+        </div>
+        <div class="col-12">
+          <%= form.label :despesa_id, "Despesa", class: "form-label" %>
+          <%= form.collection_select :despesa_id, @despesas, :id, :descricao, { prompt: "Selecione" }, class: "form-select", required: true %>
+        </div>
+        <div class="col-md-6">
+          <%= form.label :valor, "Valor", class: "form-label" %>
+          <%= form.number_field :valor, step: "0.01", min: "0.01", class: "form-control", required: true %>
+        </div>
+        <div class="col-md-6">
+          <%= form.label :data_pagamento, "Data", class: "form-label" %>
+          <%= form.date_field :data_pagamento, class: "form-control", required: true %>
+        </div>
+        <div class="col-12">
+          <%= form.label :status, "Status", class: "form-label" %>
+          <%= form.select :status, Pagamento.statuses.keys.map { |status| [ status == "paid" ? "Pago" : "Pendente", status ] }, {}, class: "form-select" %>
+        </div>
+        <div class="col-12">
+          <%= form.submit "Registrar pagamento", class: "btn btn-success" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-12 col-lg-7">
+      <h2 class="h5 mb-3">Status por morador</h2>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Morador</th>
+              <th class="text-end">Devido</th>
+              <th class="text-end">Pago</th>
+              <th class="text-end">Pendente</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @payment_rows.each do |row| %>
+              <tr>
+                <td><%= row[:resident].name %></td>
+                <td class="text-end"><%= number_to_currency(row[:devido]) %></td>
+                <td class="text-end"><%= number_to_currency(row[:pago]) %></td>
+                <td class="text-end"><%= number_to_currency(row[:pendente]) %></td>
+                <td>
+                  <% if row[:status] == "paid" %>
+                    <span class="badge text-bg-success">Pago</span>
+                  <% else %>
+                    <span class="badge text-bg-warning">Pendente</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if @pagamentos.any? %>
+        <h3 class="h6 mt-4">Pagamentos registrados</h3>
+        <div class="list-group">
+          <% @pagamentos.each do |pagamento| %>
+            <div class="list-group-item d-flex justify-content-between align-items-center gap-3 flex-wrap">
+              <div>
+                <div class="fw-semibold"><%= pagamento.resident.name %> — <%= pagamento.despesa.descricao %></div>
+                <div class="small text-muted"><%= pagamento.data_pagamento.strftime("%d/%m/%Y") %> · <%= number_to_currency(pagamento.valor) %></div>
+              </div>
+              <%= form_with model: [ @republica, pagamento ], method: :patch, class: "d-flex gap-2 align-items-center" do |form| %>
+                <%= form.select :status, Pagamento.statuses.keys.map { |status| [ status == "paid" ? "Pago" : "Pendente", status ] }, {}, class: "form-select form-select-sm" %>
+                <%= form.submit "Salvar", class: "btn btn-outline-primary btn-sm" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <p class="mt-4 mb-0"><%= link_to "← Voltar à república", republica_path(@republica), class: "link-secondary" %></p>
+</div>

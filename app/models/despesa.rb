@@ -14,6 +14,7 @@ class Despesa < ApplicationRecord
   }.freeze
 
   belongs_to :republica
+  has_many :pagamentos, dependent: :destroy
 
   validates :descricao, presence: true
   validates :valor, presence: true, numericality: { greater_than: 0 }

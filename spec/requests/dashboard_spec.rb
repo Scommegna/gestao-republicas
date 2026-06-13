@@ -17,9 +17,10 @@ RSpec.describe "Dashboard", type: :request do
       create(:resident, republica: republica, active: true, name: "Ana")
       create(:resident, republica: republica, active: true, name: "Bia")
       create(:resident, republica: republica, active: false, name: "Carlos")
-      create(:despesa, republica: republica, descricao: "Aluguel junho", valor: 1000, vencimento: Date.current)
+      aluguel = create(:despesa, republica: republica, descricao: "Aluguel junho", valor: 1000, vencimento: Date.current)
       create(:despesa, republica: republica, descricao: "Internet paga", valor: 150, vencimento: 2.days.ago.to_date)
       create(:despesa, republica: republica, descricao: "Energia futura", valor: 200, vencimento: 2.months.from_now.to_date)
+      create(:pagamento, resident: republica.residents.active.first, despesa: aluguel, valor: 500, status: :paid)
       create(:despesa, republica: create(:republica), descricao: "Despesa de outra casa", valor: 999, vencimento: Date.current)
 
       sign_in user
@@ -30,8 +31,8 @@ RSpec.describe "Dashboard", type: :request do
       expect(response.body).to include("República Central")
       expect(response.body).to include("Aluguel junho")
       expect(response.body).to include("Internet paga")
-      expect(response.body).to include("2</span> pendentes")
-      expect(response.body).to include("1</span> pagos")
+      expect(response.body).to include("$650.00</span> pendente")
+      expect(response.body).to include("$500.00</span> pago")
       expect(response.body).to include("Moradores ativos")
       expect(response.body).to include(">2</p>")
       expect(response.body).to include("$1,000.00")
@@ -46,8 +47,8 @@ RSpec.describe "Dashboard", type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include("Nenhuma república cadastrada ainda")
       expect(response.body).to include("$0.00")
-      expect(response.body).to include("0</span> pendentes")
-      expect(response.body).to include("0</span> pagos")
+      expect(response.body).to include("$0.00</span> pendente")
+      expect(response.body).to include("$0.00</span> pago")
     end
 
     it "exibe mensagem apropriada quando a república ainda não tem moradores nem despesas" do
@@ -69,7 +70,7 @@ RSpec.describe "Dashboard", type: :request do
 
       expect(response.body).to include(new_republica_despesa_path(republica))
       expect(response.body).to include(new_republica_resident_path(republica))
-      expect(response.body).to include(republica_despesas_path(republica))
+      expect(response.body).to include(republica_pagamentos_path(republica))
     end
   end
 
