@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_120001) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_13_190000) do
   create_table "despesas", force: :cascade do |t|
     t.string "categoria", null: false
     t.datetime "created_at", null: false
@@ -20,6 +20,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_120001) do
     t.decimal "valor", precision: 10, scale: 2, null: false
     t.date "vencimento", null: false
     t.index ["republica_id"], name: "index_despesas_on_republica_id"
+  end
+
+  create_table "pagamentos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "data_pagamento", null: false
+    t.integer "despesa_id", null: false
+    t.integer "resident_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "valor", precision: 10, scale: 2, null: false
+    t.index ["despesa_id"], name: "index_pagamentos_on_despesa_id"
+    t.index ["resident_id", "despesa_id"], name: "index_pagamentos_on_resident_id_and_despesa_id"
+    t.index ["resident_id"], name: "index_pagamentos_on_resident_id"
+    t.index ["status"], name: "index_pagamentos_on_status"
   end
 
   create_table "republicas", force: :cascade do |t|
@@ -65,6 +79,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_120001) do
   end
 
   add_foreign_key "despesas", "republicas"
+  add_foreign_key "pagamentos", "despesas"
+  add_foreign_key "pagamentos", "residents"
   add_foreign_key "republicas", "users"
   add_foreign_key "residents", "republicas"
 end

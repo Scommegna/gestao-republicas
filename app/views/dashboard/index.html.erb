@@ -70,8 +70,8 @@
             <h2 class="h6 text-muted mb-0">Pagamentos</h2>
             <i class="bi bi-receipt text-warning" aria-hidden="true"></i>
           </div>
-          <p class="mb-1"><span class="fw-semibold"><%= @pending_payments_count %></span> pendentes</p>
-          <p class="mb-0"><span class="fw-semibold"><%= @paid_payments_count %></span> pagos</p>
+          <p class="mb-1"><span class="fw-semibold"><%= number_to_currency(@pending_payments_total) %></span> pendente</p>
+          <p class="mb-0"><span class="fw-semibold"><%= number_to_currency(@paid_payments_total) %></span> pago</p>
         </div>
       </div>
     </div>
@@ -95,7 +95,7 @@
             <i class="bi bi-person-plus me-1" aria-hidden="true"></i>
             Registrar morador
           <% end %>
-          <%= link_to republica_despesas_path(@primary_republica), class: "btn btn-outline-primary text-start" do %>
+          <%= link_to republica_pagamentos_path(@primary_republica), class: "btn btn-outline-primary text-start" do %>
             <i class="bi bi-check2-square me-1" aria-hidden="true"></i>
             Registrar pagamento
           <% end %>

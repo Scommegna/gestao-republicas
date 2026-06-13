@@ -27,7 +27,7 @@ Com isso, o sistema permitirá:
 - registro de despesas mensais;
 - dashboard administrativo com resumo financeiro;
 - divisão automática de custos por morador;
-- acompanhamento de pagamentos;
+- acompanhamento de pagamentos por morador;
 - transparência financeira entre os integrantes da república.
 
 ## Dashboard administrativo
@@ -37,10 +37,26 @@ Após o login, o administrador é direcionado para o dashboard em `/dashboard`. 
 - total de despesas do mês atual, calculado pela data de vencimento;
 - total geral de despesas cadastradas;
 - quantidade de moradores ativos;
-- contagem de pagamentos pendentes e pagos, derivada das datas de vencimento das despesas enquanto não houver uma tabela específica de pagamentos;
+- totais de pagamentos pagos e pendentes, calculados a partir dos pagamentos registrados;
 - atalhos para cadastrar repúblicas, despesas, moradores e acompanhar pagamentos.
 
 Quando não há repúblicas, moradores ou despesas cadastradas, o dashboard exibe mensagens orientando o próximo cadastro.
+
+## Controle de pagamentos
+
+Cada república possui uma tela de pagamentos em `/republicas/:republica_id/pagamentos`. Nela o administrador pode filtrar por mês e ano, visualizar os moradores ativos, conferir o valor devido por morador no período e registrar pagamentos vinculados a uma despesa específica.
+
+O pagamento contém:
+
+- morador responsável;
+- despesa correspondente;
+- valor pago;
+- data do pagamento;
+- status `Pago` ou `Pendente`.
+
+Pagamentos parciais podem ser registrados como pendentes. O sistema impede valores zerados, negativos ou acima da cota do morador para a despesa. Um pagamento só pode ser marcado como pago quando a soma registrada para aquela despesa cobre a cota completa do morador.
+
+Os totais de pagamentos alimentam o dashboard administrativo, exibindo quanto já foi pago e quanto permanece pendente no mês atual.
 
 ---
 

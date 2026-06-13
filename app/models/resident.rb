@@ -1,5 +1,6 @@
 class Resident < ApplicationRecord
   belongs_to :republica
+  has_many :pagamentos, dependent: :destroy
 
   scope :active, -> { where(active: true) }
 

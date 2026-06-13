@@ -9,13 +9,12 @@ class DashboardController < ApplicationController
     @despesas = Despesa.where(republica: @republicas)
 
     month_range = Date.current.all_month
-    @current_month_expenses_total = @despesas.where(vencimento: month_range).sum(:valor)
+    @current_month_expenses = @despesas.where(vencimento: month_range)
+    @current_month_expenses_total = @current_month_expenses.sum(:valor)
     @registered_expenses_total = @despesas.sum(:valor)
     @active_residents_count = Resident.where(republica: @republicas).active.count
-
-    # There is no payment table yet; use expense due dates as the current payment signal.
-    @pending_payments_count = @despesas.where(vencimento: Date.current..).count
-    @paid_payments_count = @despesas.where(vencimento: ...Date.current).count
+    @paid_payments_total = Pagamento.where(despesa: @current_month_expenses).sum(:valor)
+    @pending_payments_total = [ @current_month_expenses_total - @paid_payments_total, 0.to_d ].max
     @recent_expenses = @despesas.includes(:republica).order(vencimento: :desc, created_at: :desc).limit(5)
   end
 end
