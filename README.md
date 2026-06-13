@@ -25,9 +25,22 @@ Com isso, o sistema permitirá:
 
 - cadastro de moradores;
 - registro de despesas mensais;
+- dashboard administrativo com resumo financeiro;
 - divisão automática de custos por morador;
 - acompanhamento de pagamentos;
 - transparência financeira entre os integrantes da república.
+
+## Dashboard administrativo
+
+Após o login, o administrador é direcionado para o dashboard em `/dashboard`. A página consolida apenas os dados das repúblicas vinculadas ao usuário autenticado, exibindo:
+
+- total de despesas do mês atual, calculado pela data de vencimento;
+- total geral de despesas cadastradas;
+- quantidade de moradores ativos;
+- contagem de pagamentos pendentes e pagos, derivada das datas de vencimento das despesas enquanto não houver uma tabela específica de pagamentos;
+- atalhos para cadastrar repúblicas, despesas, moradores e acompanhar pagamentos.
+
+Quando não há repúblicas, moradores ou despesas cadastradas, o dashboard exibe mensagens orientando o próximo cadastro.
 
 ---
 
@@ -109,6 +122,46 @@ docker compose version
 ```bash
 git clone git@github.com:Scommegna/gestao-republicas.git
 cd gestao-republicas
+```
+
+
+## Atalhos Docker com `rep.sh`
+
+O arquivo `rep.sh` cria o helper `rep` para simplificar os comandos Docker mais usados. Carregue o script no shell atual antes de usar:
+
+```bash
+source ./rep.sh
+```
+
+Depois disso, use:
+
+```bash
+rep build
+```
+
+Esse comando executa:
+
+```bash
+docker compose build
+```
+
+Para subir a aplicação, use:
+
+```bash
+rep run
+```
+
+Esse comando executa:
+
+```bash
+docker compose up
+```
+
+Também é possível executar o script diretamente sem carregar o helper:
+
+```bash
+./rep.sh build
+./rep.sh run
 ```
 
 ## Build da imagem Docker

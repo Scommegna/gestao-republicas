@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "dashboard", to: "dashboard#index"
   get "home/index"
   devise_for :users,
               path: "",
@@ -15,7 +16,7 @@ Rails.application.routes.draw do
   end
 
   authenticated :user do
-    root "home#index", as: :authenticated_root
+    root "dashboard#index", as: :authenticated_root
   end
 
   unauthenticated do

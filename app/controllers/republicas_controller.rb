@@ -22,7 +22,7 @@ class RepublicasController < ApplicationController
     if @republica.save
       redirect_to @republica, notice: "República criada com sucesso."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -30,7 +30,7 @@ class RepublicasController < ApplicationController
     if @republica.update(republica_params)
       redirect_to @republica, notice: "República atualizada com sucesso."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

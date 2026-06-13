@@ -20,7 +20,7 @@ class ResidentsController < ApplicationController
     if @resident.save
       redirect_to republica_residents_path(@republica), notice: "Morador cadastrado com sucesso."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -28,7 +28,7 @@ class ResidentsController < ApplicationController
     if @resident.update(resident_params)
       redirect_to republica_residents_path(@republica), notice: "Morador atualizado com sucesso."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

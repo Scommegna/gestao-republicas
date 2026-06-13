@@ -52,6 +52,23 @@ RSpec.describe Resident, type: :model do
     end
   end
 
+describe "escopos" do
+  it "lista apenas moradores ativos" do
+    active = create(:resident, active: true)
+    create(:resident, republica: active.republica, active: false)
+
+    expect(described_class.active).to contain_exactly(active)
+  end
+end
+
+describe "padrões" do
+  it "define novo morador como ativo por padrão" do
+    resident = create(:resident)
+
+    expect(resident).to be_active
+  end
+end
+
   describe "associações" do
     it "pertence a uma república" do
       expect(described_class.reflect_on_association(:republica).macro).to eq(:belongs_to)

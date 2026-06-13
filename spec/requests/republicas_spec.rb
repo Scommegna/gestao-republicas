@@ -57,6 +57,23 @@ RSpec.describe "Republicas", type: :request do
       expect(response).to redirect_to(republicas_url)
     end
 
+    it "não cria república inválida" do
+      expect do
+        post republicas_path, params: { republica: { name: "", endereco: "Rua X" } }
+      end.not_to change(Republica, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "não atualiza república inválida" do
+      republica = create(:republica, user: user, name: "Nome original")
+
+      patch republica_path(republica), params: { republica: { name: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(republica.reload.name).to eq("Nome original")
+    end
+
     it "não permite acessar república de outro usuário" do
       outro = create(
         :user,

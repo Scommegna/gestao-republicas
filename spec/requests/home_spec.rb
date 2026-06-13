@@ -22,12 +22,12 @@ RSpec.describe "Home", type: :request do
 
   describe "GET / (root)" do
     context "when signed in" do
-      it "shows the home page" do
+      it "shows the administrative dashboard" do
         sign_in create(:user)
         get "/"
 
         expect(response).to have_http_status(:success)
-        expect(response.body).to include("Bem-vindo")
+        expect(response.body).to include("Resumo financeiro")
       end
     end
 

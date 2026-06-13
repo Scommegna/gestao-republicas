@@ -1,0 +1,140 @@
+<% content_for :title, "Dashboard administrativo" %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div>
+      <p class="text-muted small mb-1">Painel administrativo</p>
+      <h1 class="h3 mb-1">Resumo financeiro</h1>
+      <p class="text-muted mb-0">Acompanhe despesas, moradores e pagamentos das suas repúblicas.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-outline-danger" do %>
+        <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>
+        Sair
+      <% end %>
+    </div>
+  </div>
+
+  <% if @republicas.none? %>
+    <div class="alert alert-info">
+      Nenhuma república cadastrada ainda.
+      <%= link_to "Cadastre uma república para iniciar o controle financeiro", new_republica_path, class: "alert-link" %>.
+    </div>
+  <% elsif @despesas.none? && @active_residents_count.zero? %>
+    <div class="alert alert-info">
+      Nenhum dado financeiro cadastrado ainda. Use os atalhos para registrar moradores e despesas.
+    </div>
+  <% end %>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Despesas do mês</h2>
+            <i class="bi bi-calendar3 text-success" aria-hidden="true"></i>
+          </div>
+          <p class="h4 mb-0"><%= number_to_currency(@current_month_expenses_total) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Total cadastrado</h2>
+            <i class="bi bi-cash-stack text-primary" aria-hidden="true"></i>
+          </div>
+          <p class="h4 mb-0"><%= number_to_currency(@registered_expenses_total) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Moradores ativos</h2>
+            <i class="bi bi-people text-info" aria-hidden="true"></i>
+          </div>
+          <p class="h4 mb-0"><%= @active_residents_count %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Pagamentos</h2>
+            <i class="bi bi-receipt text-warning" aria-hidden="true"></i>
+          </div>
+          <p class="mb-1"><span class="fw-semibold"><%= @pending_payments_count %></span> pendentes</p>
+          <p class="mb-0"><span class="fw-semibold"><%= @paid_payments_count %></span> pagos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-4">
+      <h2 class="h5 mb-3">Atalhos</h2>
+      <div class="d-grid gap-2">
+        <%= link_to new_republica_path, class: "btn btn-outline-secondary text-start" do %>
+          <i class="bi bi-house-add me-1" aria-hidden="true"></i>
+          Nova república
+        <% end %>
+
+        <% if @primary_republica %>
+          <%= link_to new_republica_despesa_path(@primary_republica), class: "btn btn-success text-start" do %>
+            <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
+            Registrar despesa
+          <% end %>
+          <%= link_to new_republica_resident_path(@primary_republica), class: "btn btn-primary text-start" do %>
+            <i class="bi bi-person-plus me-1" aria-hidden="true"></i>
+            Registrar morador
+          <% end %>
+          <%= link_to republica_despesas_path(@primary_republica), class: "btn btn-outline-primary text-start" do %>
+            <i class="bi bi-check2-square me-1" aria-hidden="true"></i>
+            Registrar pagamento
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-8">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h2 class="h5 mb-0">Despesas recentes</h2>
+        <%= link_to "Ver repúblicas", republicas_path, class: "link-secondary" %>
+      </div>
+
+      <% if @recent_expenses.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th>República</th>
+                <th>Vencimento</th>
+                <th class="text-end">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_expenses.each do |despesa| %>
+                <tr>
+                  <td><%= link_to despesa.descricao, republica_despesa_path(despesa.republica, despesa), class: "link-dark" %></td>
+                  <td><%= despesa.republica.name %></td>
+                  <td><%= despesa.vencimento.strftime("%d/%m/%Y") %></td>
+                  <td class="text-end"><%= number_to_currency(despesa.valor) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-light border mb-0">Nenhuma despesa cadastrada para exibir.</div>
+      <% end %>
+    </div>
+  </div>
+</div>
