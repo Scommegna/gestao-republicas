@@ -43,5 +43,27 @@ RSpec.describe Despesa, type: :model do
       despesa = create(:despesa, republica: republica, valor: 100)
       expect(despesa.valor_por_morador).to eq(50.0)
     end
+
+  it "arredonda a divisão por morador para duas casas decimais" do
+    3.times { create(:resident, republica: republica, active: true) }
+
+    despesa = create(:despesa, republica: republica, valor: 100)
+    expect(despesa.valor_por_morador).to eq(33.33)
+  end
+end
+
+describe "#categoria_label" do
+  it "retorna o rótulo legível da categoria" do
+    despesa = build(:despesa, categoria: "agua")
+
+    expect(despesa.categoria_label).to eq("Água")
+  end
+
+  it "retorna o valor original quando a categoria não possui rótulo" do
+    despesa = build(:despesa)
+    despesa.categoria = "taxa_extra"
+
+    expect(despesa.categoria_label).to eq("taxa_extra")
+  end
   end
 end

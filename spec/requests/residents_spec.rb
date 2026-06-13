@@ -35,7 +35,7 @@ RSpec.describe "Residents", type: :request do
       expect {
         post republica_residents_path(republica), params: { resident: { name: "", email: "x@x.com" } }
       }.not_to change(Resident, :count)
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
@@ -66,6 +66,32 @@ RSpec.describe "Residents", type: :request do
 
     it "não permite acessar moradores de república de outro usuário" do
       get republica_residents_path(outra_republica)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "não permite editar morador de república de outro usuário" do
+      resident = create(:resident, republica: outra_republica)
+
+      get edit_republica_resident_path(outra_republica, resident)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "não permite atualizar morador de república de outro usuário" do
+      resident = create(:resident, republica: outra_republica, name: "Nome original")
+
+      patch republica_resident_path(outra_republica, resident), params: { resident: { name: "Invadido" } }
+
+      expect(response).to have_http_status(:not_found)
+      expect(resident.reload.name).to eq("Nome original")
+    end
+
+    it "não permite remover morador de república de outro usuário" do
+      resident = create(:resident, republica: outra_republica)
+
+      expect do
+        delete republica_resident_path(outra_republica, resident)
+      end.not_to change(Resident, :count)
       expect(response).to have_http_status(:not_found)
     end
   end

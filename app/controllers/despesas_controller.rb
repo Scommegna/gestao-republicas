@@ -25,7 +25,7 @@ class DespesasController < ApplicationController
     if @despesa.save
       redirect_to republica_despesa_path(@republica, @despesa), notice: "Despesa cadastrada com sucesso."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -33,7 +33,7 @@ class DespesasController < ApplicationController
     if @despesa.update(despesa_params)
       redirect_to republica_despesa_path(@republica, @despesa), notice: "Despesa atualizada com sucesso."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

@@ -95,6 +95,15 @@ RSpec.describe User, type: :model do
     end
   end
 
+describe 'associations' do
+  it 'removes owned repúblicas when the user is removed' do
+    saved_user = create(:user)
+    create(:republica, user: saved_user)
+
+    expect { saved_user.destroy }.to change(Republica, :count).by(-1)
+  end
+end
+
   describe 'callbacks' do
     it 'generates jti before create' do
       expect(user.jti).to be_nil

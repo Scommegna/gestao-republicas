@@ -83,7 +83,64 @@ RSpec.describe "Despesas", type: :request do
         }
       end.not_to change(Despesa, :count)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "não atualiza despesa inválida" do
+      despesa = create(:despesa, republica: republica, valor: 100)
+
+      patch republica_despesa_path(republica, despesa), params: { despesa: { valor: "0" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(despesa.reload.valor).to eq(100)
+    end
+  end
+
+  describe "acesso não autorizado" do
+    before { sign_in user }
+
+    let(:outro_user) do
+      create(
+        :user,
+        phone: "31988883333",
+        document: Faker::Number.unique.number(digits: 11).to_s,
+        email: Faker::Internet.unique.email
+      )
+    end
+    let(:rep_outra) { create(:republica, user: outro_user) }
+
+    it "não permite mostrar despesa de república de outro usuário" do
+      despesa = create(:despesa, republica: rep_outra)
+
+      get republica_despesa_path(rep_outra, despesa)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "não permite editar despesa de república de outro usuário" do
+      despesa = create(:despesa, republica: rep_outra)
+
+      get edit_republica_despesa_path(rep_outra, despesa)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "não permite atualizar despesa de república de outro usuário" do
+      despesa = create(:despesa, republica: rep_outra, descricao: "Original")
+
+      patch republica_despesa_path(rep_outra, despesa), params: { despesa: { descricao: "Invadida" } }
+
+      expect(response).to have_http_status(:not_found)
+      expect(despesa.reload.descricao).to eq("Original")
+    end
+
+    it "não permite remover despesa de república de outro usuário" do
+      despesa = create(:despesa, republica: rep_outra)
+
+      expect do
+        delete republica_despesa_path(rep_outra, despesa)
+      end.not_to change(Despesa, :count)
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

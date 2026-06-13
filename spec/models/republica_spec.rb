@@ -6,6 +6,14 @@ RSpec.describe Republica, type: :model do
       republica = create(:republica)
       expect(republica.user).to be_a(User)
     end
+
+it "remove moradores e despesas dependentes ao ser removida" do
+  republica = create(:republica)
+  create(:resident, republica: republica)
+  create(:despesa, republica: republica)
+
+  expect { republica.destroy }.to change(Resident, :count).by(-1).and change(Despesa, :count).by(-1)
+end
   end
 
   describe "validações" do
