@@ -327,6 +327,29 @@ Acesse:
 http://localhost:3000
 ```
 
+## Dados de demonstração (seeds)
+
+Em **development**, após preparar o banco:
+
+```bash
+bin/rails db:seed
+```
+
+Com Docker:
+
+```bash
+docker compose run --rm -e RAILS_ENV=development web bin/rails db:seed
+```
+
+Credenciais criadas:
+
+| Campo | Valor |
+|-------|--------|
+| E-mail | `demo@example.com` |
+| Senha | `123456` |
+
+O seed é **idempotente** (pode rodar de novo sem duplicar usuário/república) e popula república, moradores, despesas e pagamentos de exemplo para testar o dashboard.
+
 # 5. Github Projects
 
 https://github.com/users/Scommegna/projects/1
