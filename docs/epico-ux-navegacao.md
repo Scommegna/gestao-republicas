@@ -1,0 +1,75 @@
+# Épico — Reformulação de navegação e UX
+
+> Objetivo: melhorar o **fluxo de navegação** e o **design** do sistema, hoje
+> sem navegação global e visualmente inconsistente (a tela de login é estilizada,
+> mas o app autenticado usa Bootstrap puro e não tem barra de navegação).
+>
+> Premissa: priorizar fluxo e design — **pouca funcionalidade nova**, reaproveitando
+> o modelo de dados e a identidade visual já existentes (paleta verde `#2D6A4F`,
+> fontes Fraunces + DM Sans definidas na tela de login).
+
+## Decisões de produto
+
+- **Vínculo usuário ↔ república:** modelo de **membros**. Um usuário poderá
+  **entrar** em uma república existente (não apenas ser dono). Isso exige um
+  vínculo novo (User ↔ República) e entra junto com a US-B/US-C.
+- **Branch/commits:** uma única branch de épico (`feat/ux-navegacao-redesign`)
+  com commits semânticos por user story.
+- **Ordem de entrega:** fundação primeiro (US-A + US-E), depois US-B, US-C e US-D.
+
+## User Stories
+
+### US-A — Navegação global e base de design  ✅ (1ª leva)
+**Como** usuário autenticado,
+**quero** uma barra de navegação consistente no topo de todas as telas (com home,
+menu, perfil, configurações e sair),
+**para** navegar pelo sistema sem ficar preso em uma tela.
+
+Critérios de aceite:
+- [ ] Navbar fixa no topo, presente em todas as telas autenticadas.
+- [ ] Ícones de menu, perfil e configurações; ação de sair acessível.
+- [ ] Navbar **não** aparece nas telas de login/cadastro.
+- [ ] Identidade visual unificada (paleta, tipografia, cards) em todo o app.
+- [ ] Responsivo (menu recolhível no mobile).
+
+### US-B — Tela inicial de repúblicas (usuário sem república)  ⏳
+**Como** usuário que ainda não participa de nenhuma república,
+**quero** ver as repúblicas existentes, com busca e opção de criar a minha,
+**para** encontrar e entrar em uma república ou criar a minha.
+
+Critérios de aceite:
+- [ ] Se o usuário não participa de nenhuma república, exibe vitrine das existentes.
+- [ ] Cada república mostra nome, tipo (feminina/masculina/mista) e nº de moradores.
+- [ ] Campo de busca por nome.
+- [ ] Botão "criar república".
+- [ ] Ação de entrar/solicitar entrada em uma república (modelo de membros).
+
+### US-C — Dashboard da república (usuário com república)  ⏳
+**Como** participante de uma república,
+**quero** um painel da minha república com participantes, contas abertas e avisos,
+**para** acompanhar a vida financeira e a organização da casa.
+
+Critérios de aceite:
+- [ ] Lista de participantes (moradores ativos).
+- [ ] Contas/despesas em aberto.
+- [ ] Área de avisos (placeholder estático nesta fase; vira US própria depois).
+
+### US-D — Divisão automática por morador  ⏳
+**Como** administrador da república,
+**quero** que o sistema calcule e exiba automaticamente quanto cada morador deve
+pagar de cada despesa,
+**para** garantir a divisão justa entre os moradores ativos.
+
+> Backend já existe: `Despesa#valor_por_morador` divide o valor pelos moradores
+> ativos. Falta **exibir** isso em uma tela clara por morador.
+
+### US-E — Dados de demonstração (seeds)  ✅ (1ª leva)
+**Como** time de desenvolvimento,
+**quero** dados realistas pré-cadastrados,
+**para** visualizar e demonstrar o sistema com conteúdo.
+
+Critérios de aceite:
+- [ ] Campo `tipo` em `repúblicas` (feminina/masculina/mista).
+- [ ] Ao menos 5 repúblicas fictícias, com tipos variados.
+- [ ] Ao menos 5 moradores por república.
+- [ ] Seeds idempotentes (`bin/rails db:seed` pode rodar mais de uma vez).
