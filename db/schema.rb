@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_13_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_202700) do
   create_table "despesas", force: :cascade do |t|
     t.string "categoria", null: false
     t.datetime "created_at", null: false
@@ -41,6 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_190000) do
     t.text "descricao"
     t.string "endereco"
     t.string "name", null: false
+    t.string "tipo", default: "mista", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_republicas_on_user_id"
