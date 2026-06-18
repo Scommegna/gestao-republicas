@@ -40,6 +40,65 @@
     </div>
   </div>
 
+  <% divisao = @despesa.divisao_por_morador %>
+  <div class="card mt-4">
+    <div class="card-header bg-transparent">
+      <h2 class="h5 mb-0"><i class="bi bi-pie-chart me-2" aria-hidden="true"></i>Divisão entre moradores</h2>
+    </div>
+    <div class="card-body">
+      <% if divisao.any? %>
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Morador</th>
+                <th class="text-end">Cota</th>
+                <th class="text-end">Pago</th>
+                <th class="text-end">Falta</th>
+                <th class="text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% divisao.each do |morador, cota| %>
+                <% pago = @despesa.valor_pago_por(morador) %>
+                <% falta = [ cota - pago, 0.to_d ].max %>
+                <tr>
+                  <td><%= morador.name %></td>
+                  <td class="text-end"><%= number_to_currency(cota) %></td>
+                  <td class="text-end"><%= number_to_currency(pago) %></td>
+                  <td class="text-end"><%= number_to_currency(falta) %></td>
+                  <td class="text-center">
+                    <% if falta.zero? %>
+                      <span class="badge text-bg-success">Quitado</span>
+                    <% elsif pago.positive? %>
+                      <span class="badge text-bg-warning">Parcial</span>
+                    <% else %>
+                      <span class="badge text-bg-secondary">Em aberto</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+            <tfoot>
+              <tr class="fw-semibold border-top">
+                <td>Total</td>
+                <td class="text-end"><%= number_to_currency(divisao.sum { |_, cota| cota }) %></td>
+                <td colspan="3"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="text-muted small mb-0 mt-2">
+          A soma das cotas fecha exatamente com o valor total da despesa.
+        </p>
+      <% else %>
+        <p class="text-muted mb-0">
+          Nenhum morador ativo cadastrado — cadastre moradores para calcular a divisão.
+        </p>
+      <% end %>
+    </div>
+  </div>
+
   <p class="mt-4 mb-0">
     <%= link_to "← Lista de despesas", republica_despesas_path(@republica), class: "link-secondary" %>
   </p>

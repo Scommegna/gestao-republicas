@@ -143,4 +143,40 @@ RSpec.describe "Despesas", type: :request do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe "divisão por morador (US09)" do
+    it "exibe a divisão por morador na tela da despesa" do
+      create(:resident, republica: republica, name: "Ana", active: true)
+      create(:resident, republica: republica, name: "Bia", active: true)
+      despesa = create(:despesa, republica: republica, valor: 100)
+
+      sign_in user
+      get republica_despesa_path(republica, despesa)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("Divisão entre moradores")
+      expect(response.body).to include("Ana")
+      expect(response.body).to include("Bia")
+      expect(response.body).to include("$50.00")
+    end
+
+    it "mostra mensagem apropriada quando não há moradores" do
+      despesa = create(:despesa, republica: republica, valor: 100)
+
+      sign_in user
+      get republica_despesa_path(republica, despesa)
+
+      expect(response.body).to include("Nenhum morador ativo cadastrado")
+    end
+
+    it "não permite ver a divisão de despesa de república de outro usuário" do
+      rep_outra = create(:republica)
+      despesa = create(:despesa, republica: rep_outra, valor: 100)
+
+      sign_in user
+      get republica_despesa_path(rep_outra, despesa)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

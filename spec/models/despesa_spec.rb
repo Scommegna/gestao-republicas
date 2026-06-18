@@ -66,4 +66,39 @@ describe "#categoria_label" do
     expect(despesa.categoria_label).to eq("taxa_extra")
   end
   end
+
+  describe "#divisao_por_morador" do
+    let(:republica) { create(:republica) }
+
+    it "retorna vazio quando não há moradores ativos" do
+      despesa = create(:despesa, republica: republica, valor: 100)
+      expect(despesa.divisao_por_morador).to eq([])
+    end
+
+    it "divide igualmente quando o valor é divisível" do
+      2.times { create(:resident, republica: republica, active: true) }
+      despesa = create(:despesa, republica: republica, valor: 100)
+
+      cotas = despesa.divisao_por_morador.map { |_, cota| cota }
+      expect(cotas).to eq([ 50.to_d, 50.to_d ])
+    end
+
+    it "distribui a sobra de centavos para a soma fechar com o total" do
+      3.times { create(:resident, republica: republica, active: true) }
+      despesa = create(:despesa, republica: republica, valor: 100)
+
+      cotas = despesa.divisao_por_morador.map { |_, cota| cota }
+      expect(cotas.sum).to eq(100.to_d)
+      expect(cotas).to contain_exactly(33.34.to_d, 33.33.to_d, 33.33.to_d)
+    end
+
+    it "ignora moradores inativos" do
+      create(:resident, republica: republica, active: true)
+      create(:resident, republica: republica, active: false)
+      despesa = create(:despesa, republica: republica, valor: 100)
+
+      expect(despesa.divisao_por_morador.size).to eq(1)
+      expect(despesa.divisao_por_morador.first.last).to eq(100.to_d)
+    end
+  end
 end
