@@ -63,8 +63,9 @@ Critérios de aceite:
 pagar de cada despesa,
 **para** garantir a divisão justa entre os moradores ativos.
 
-> Backend já existe: `Despesa#valor_por_morador` divide o valor pelos moradores
-> ativos. Falta **exibir** isso em uma tela clara por morador.
+> Reconciliada com a PR #44 (já mergeada na `main`), que implementa a divisão
+> criando um `Pagamento` por morador a cada despesa. Adotamos essa abordagem; o
+> dashboard (US-C) soma esses pagamentos para mostrar o total devido por morador.
 
 ### US-E — Dados de demonstração (seeds)  ✅ (1ª leva)
 **Como** time de desenvolvimento,

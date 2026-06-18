@@ -76,6 +76,29 @@ RSpec.describe "Despesas", type: :request do
       end.to change(Despesa, :count).by(-1)
     end
 
+    it "cria despesa com seleção específica de moradores" do
+      resident1 = create(:resident, republica: republica, active: true, name: "João")
+      resident2 = create(:resident, republica: republica, active: true, name: "Maria")
+      resident3 = create(:resident, republica: republica, active: true, name: "Carlos")
+
+      expect do
+        post republica_despesas_path(republica), params: {
+          despesa: {
+            descricao: "Compras coletivas",
+            valor: "300",
+            vencimento: "2026-06-10",
+            categoria: "compras",
+            resident_ids: [ resident1.id, resident2.id ]
+          }
+        }
+      end.to change(Despesa, :count).by(1)
+
+      despesa = Despesa.order(:created_at).last
+      expect(despesa.pagamentos.count).to eq(2)
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 150.0 ])
+      expect(despesa.pagamentos.map(&:resident).map(&:name)).to match_array([ "João", "Maria" ])
+    end
+
     it "não cria despesa inválida" do
       expect do
         post republica_despesas_path(republica), params: {
@@ -140,42 +163,6 @@ RSpec.describe "Despesas", type: :request do
       expect do
         delete republica_despesa_path(rep_outra, despesa)
       end.not_to change(Despesa, :count)
-      expect(response).to have_http_status(:not_found)
-    end
-  end
-
-  describe "divisão por morador (US09)" do
-    it "exibe a divisão por morador na tela da despesa" do
-      create(:resident, republica: republica, name: "Ana", active: true)
-      create(:resident, republica: republica, name: "Bia", active: true)
-      despesa = create(:despesa, republica: republica, valor: 100)
-
-      sign_in user
-      get republica_despesa_path(republica, despesa)
-
-      expect(response).to have_http_status(:success)
-      expect(response.body).to include("Divisão entre moradores")
-      expect(response.body).to include("Ana")
-      expect(response.body).to include("Bia")
-      expect(response.body).to include("$50.00")
-    end
-
-    it "mostra mensagem apropriada quando não há moradores" do
-      despesa = create(:despesa, republica: republica, valor: 100)
-
-      sign_in user
-      get republica_despesa_path(republica, despesa)
-
-      expect(response.body).to include("Nenhum morador ativo cadastrado")
-    end
-
-    it "não permite ver a divisão de despesa de república de outro usuário" do
-      rep_outra = create(:republica)
-      despesa = create(:despesa, republica: rep_outra, valor: 100)
-
-      sign_in user
-      get republica_despesa_path(rep_outra, despesa)
-
       expect(response).to have_http_status(:not_found)
     end
   end

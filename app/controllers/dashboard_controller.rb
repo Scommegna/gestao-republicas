@@ -29,14 +29,9 @@ class DashboardController < ApplicationController
 
   private
 
-  # Total devido por cada morador somando a cota de todas as despesas.
+  # Total devido por cada morador somando suas cotas (pagamentos) em todas as despesas.
   def total_por_morador(despesas, residents)
-    totais = residents.each_with_object({}) { |r, h| h[r.id] = 0.to_d }
-    despesas.each do |despesa|
-      despesa.divisao_por_morador.each do |morador, cota|
-        totais[morador.id] = totais.fetch(morador.id, 0.to_d) + cota
-      end
-    end
-    totais
+    somas = Pagamento.where(despesa: despesas, resident: residents).group(:resident_id).sum(:valor)
+    residents.each_with_object({}) { |r, h| h[r.id] = somas[r.id] || 0.to_d }
   end
 end
