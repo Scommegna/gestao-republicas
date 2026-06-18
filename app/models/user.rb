@@ -1,6 +1,19 @@
 class User < ApplicationRecord
   has_many :republicas, dependent: :destroy
 
+  # Participação como morador (membro) de repúblicas de terceiros.
+  has_many :resident_profiles, class_name: "Resident", dependent: :nullify
+  has_many :member_republicas, through: :resident_profiles, source: :republica
+
+  # Repúblicas em que o usuário participa: as que possui (dono) + as que entrou.
+  def participating_republicas
+    Republica.where(id: republica_ids | member_republica_ids).order(:name)
+  end
+
+  def participating?(republica)
+    republica.user_id == id || resident_profiles.exists?(republica_id: republica.id)
+  end
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
