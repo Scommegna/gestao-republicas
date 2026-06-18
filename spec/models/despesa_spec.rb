@@ -87,7 +87,7 @@ RSpec.describe Despesa, type: :model do
       despesa = create(:despesa, republica: republica, valor: 100)
 
       expect(despesa.pagamentos.count).to eq(2)
-      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([50.0])
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 50.0 ])
     end
 
     it "cria pagamentos com status pending" do
@@ -120,7 +120,7 @@ RSpec.describe Despesa, type: :model do
       despesa = create(:despesa, republica: republica)
 
       residents_com_pagamento = despesa.pagamentos.map(&:resident).map(&:name)
-      expect(residents_com_pagamento).to match_array(["João", "Maria"])
+      expect(residents_com_pagamento).to match_array([ "João", "Maria" ])
     end
 
     it "cria pagamentos apenas para moradores selecionados" do
@@ -129,13 +129,13 @@ RSpec.describe Despesa, type: :model do
       resident3 = create(:resident, republica: republica, active: true, name: "Carlos")
 
       despesa = build(:despesa, republica: republica, valor: 300)
-      despesa.resident_ids = [resident1.id, resident2.id]
+      despesa.resident_ids = [ resident1.id, resident2.id ]
       despesa.save!
 
       expect(despesa.pagamentos.count).to eq(2)
-      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([150.0])
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 150.0 ])
       residents_com_pagamento = despesa.pagamentos.map(&:resident).map(&:name)
-      expect(residents_com_pagamento).to match_array(["João", "Maria"])
+      expect(residents_com_pagamento).to match_array([ "João", "Maria" ])
     end
 
     it "usa moradores ativos quando resident_ids está vazio" do
@@ -148,7 +148,7 @@ RSpec.describe Despesa, type: :model do
       despesa.save!
 
       expect(despesa.pagamentos.count).to eq(2)
-      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([50.0])
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 50.0 ])
     end
 
     it "divide o valor corretamente entre os moradores selecionados" do
@@ -157,11 +157,11 @@ RSpec.describe Despesa, type: :model do
       resident3 = create(:resident, republica: republica, active: true)
 
       despesa = build(:despesa, republica: republica, valor: 100)
-      despesa.resident_ids = [resident1.id, resident3.id]
+      despesa.resident_ids = [ resident1.id, resident3.id ]
       despesa.save!
 
       expect(despesa.pagamentos.count).to eq(2)
-      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([50.0])
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 50.0 ])
     end
 
     it "usa todos os moradores ativos quando resident_ids não é fornecido" do
@@ -172,7 +172,7 @@ RSpec.describe Despesa, type: :model do
       despesa = create(:despesa, republica: republica, valor: 100)
 
       expect(despesa.pagamentos.count).to eq(2)
-      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([50.0])
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 50.0 ])
     end
   end
 
@@ -195,7 +195,7 @@ RSpec.describe Despesa, type: :model do
       resident3 = create(:resident, republica: republica, active: true)
 
       despesa = build(:despesa, republica: republica, valor: 300)
-      despesa.resident_ids = [resident1.id, resident2.id]
+      despesa.resident_ids = [ resident1.id, resident2.id ]
       despesa.save!
 
       expect(despesa.moradores_na_despesa).to eq(2)
@@ -216,7 +216,7 @@ RSpec.describe Despesa, type: :model do
       create(:resident, republica: republica, active: false)
 
       despesa = build(:despesa, republica: republica, valor: 100)
-      despesa.resident_ids = [resident1.id, resident2.id]
+      despesa.resident_ids = [ resident1.id, resident2.id ]
       despesa.save!
 
       expect(republica.residents.active.count).to eq(3)

@@ -53,7 +53,7 @@ RSpec.describe "Pagamentos", type: :request do
       # Testamos atualizando o status desse pagamento existente
       pagamento_existente = despesa.pagamentos.find_by(resident: ana)
       expect(pagamento_existente).to be_present
-      
+
       expect do
         post republica_pagamentos_path(republica), params: {
           pagamento: {
@@ -153,11 +153,11 @@ RSpec.describe "Pagamentos", type: :request do
       # Pega os pagamentos criados automaticamente (100 cada para Ana e Bia)
       pagamento_ana = despesa.pagamentos.find_by(resident: ana)
       pagamento_bia = despesa.pagamentos.find_by(resident: bia)
-      
+
       # Marca ambos como pagos
       pagamento_ana.update!(status: :paid)
       pagamento_bia.update!(status: :paid)
-      
+
       sign_in user
 
       get dashboard_path

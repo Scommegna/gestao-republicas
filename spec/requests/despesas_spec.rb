@@ -88,15 +88,15 @@ RSpec.describe "Despesas", type: :request do
             valor: "300",
             vencimento: "2026-06-10",
             categoria: "compras",
-            resident_ids: [resident1.id, resident2.id]
+            resident_ids: [ resident1.id, resident2.id ]
           }
         }
       end.to change(Despesa, :count).by(1)
 
       despesa = Despesa.order(:created_at).last
       expect(despesa.pagamentos.count).to eq(2)
-      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([150.0])
-      expect(despesa.pagamentos.map(&:resident).map(&:name)).to match_array(["João", "Maria"])
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 150.0 ])
+      expect(despesa.pagamentos.map(&:resident).map(&:name)).to match_array([ "João", "Maria" ])
     end
 
     it "não cria despesa inválida" do

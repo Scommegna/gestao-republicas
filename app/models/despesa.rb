@@ -51,10 +51,10 @@ class Despesa < ApplicationRecord
   def criar_pagamentos_para_moradores
     # Se resident_ids foi fornecido, usa apenas aqueles. Senão, usa todos os ativos.
     residents = if resident_ids.present?
-                  resident_ids.reject(&:blank?).map { |id| republica.residents.find(id) }
-                else
-                  republica.residents.active
-                end
+      resident_ids.reject(&:blank?).map { |id| republica.residents.find(id) }
+    else
+      republica.residents.active
+    end
 
     return if residents.empty?
 

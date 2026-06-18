@@ -17,16 +17,16 @@ RSpec.describe "Dashboard", type: :request do
       ana = create(:resident, republica: republica, active: true, name: "Ana")
       bia = create(:resident, republica: republica, active: true, name: "Bia")
       create(:resident, republica: republica, active: false, name: "Carlos")
-      
+
       # Cria despesas - cada uma cria pagamentos automaticamente
       aluguel = create(:despesa, republica: republica, descricao: "Aluguel junho", valor: 1000, vencimento: Date.current)
       internet = create(:despesa, republica: republica, descricao: "Internet paga", valor: 150, vencimento: 2.days.ago.to_date)
       create(:despesa, republica: republica, descricao: "Energia futura", valor: 200, vencimento: 2.months.from_now.to_date)
-      
+
       # Marca pagamento de Ana na despesa de aluguel como pago
       pagamento_ana_aluguel = aluguel.pagamentos.find_by(resident: ana)
       pagamento_ana_aluguel.update!(status: :paid)
-      
+
       # Marca ambos os pagamentos da internet como pagos
       internet.pagamentos.update_all(status: :paid)
 
