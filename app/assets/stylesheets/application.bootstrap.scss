@@ -111,5 +111,26 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, .04), 0 6px 24px rgba(0, 0, 0, .05);
 }
 
+.stat-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px rgba(45, 106, 79, .12);
+  }
+}
+
+.republica-hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.875rem;
+  background: $verde;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(45, 106, 79, .25);
+}
+
 .btn { font-weight: 500; }
 .btn-primary { box-shadow: 0 2px 8px rgba(45, 106, 79, .2); }
