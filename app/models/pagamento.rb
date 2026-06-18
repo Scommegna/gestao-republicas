@@ -6,11 +6,13 @@ class Pagamento < ApplicationRecord
 
   enum :status, { pending: "pending", paid: "paid" }
 
+  attr_accessor :skip_validation
+
   validates :valor, presence: true, numericality: { greater_than: 0 }
   validates :data_pagamento, :status, presence: true
   validate :resident_and_despesa_belong_to_same_republica
-  validate :valor_does_not_exceed_resident_share
-  validate :paid_status_requires_full_expense_share
+  validate :valor_does_not_exceed_resident_share, unless: :skip_validation?
+  validate :paid_status_requires_full_expense_share, unless: :skip_validation?
 
   def valor_devido
     despesa.valor_por_morador || 0.to_d
@@ -21,6 +23,10 @@ class Pagamento < ApplicationRecord
   end
 
   private
+
+  def skip_validation?
+    skip_validation == true
+  end
 
   def resident_and_despesa_belong_to_same_republica
     return if resident.blank? || despesa.blank?

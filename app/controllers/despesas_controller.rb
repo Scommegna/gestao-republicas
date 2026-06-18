@@ -53,6 +53,6 @@ class DespesasController < ApplicationController
   end
 
   def despesa_params
-    params.require(:despesa).permit(:descricao, :valor, :vencimento, :categoria)
+    params.require(:despesa).permit(:descricao, :valor, :vencimento, :categoria, resident_ids: [])
   end
 end

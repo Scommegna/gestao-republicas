@@ -39,6 +39,28 @@
           required: true %>
   </div>
 
+  <% if @republica.residents.active.any? %>
+    <div class="col-12">
+      <label class="form-label d-block">Moradores a incluir</label>
+      <% if @republica.residents.active.count <= 5 %>
+        <% @republica.residents.active.each do |resident| %>
+          <div class="form-check">
+            <%= form.check_box :resident_ids, { multiple: true, class: "form-check-input" }, resident.id, nil %>
+            <%= form.label "despesa_resident_ids_#{resident.id}", resident.name, class: "form-check-label" %>
+          </div>
+        <% end %>
+      <% else %>
+        <%= form.collection_check_boxes :resident_ids, @republica.residents.active, :id, :name do |b| %>
+          <div class="form-check">
+            <%= b.check_box(class: "form-check-input") %>
+            <%= b.label(class: "form-check-label") %>
+          </div>
+        <% end %>
+      <% end %>
+      <small class="text-muted d-block mt-2">Se nenhum morador for selecionado, a despesa será dividida entre todos os ativos.</small>
+    </div>
+  <% end %>
+
   <div class="col-12 d-flex gap-2">
     <%= form.submit class: "btn btn-success" %>
     <%= link_to "Cancelar", republica_despesas_path(@republica), class: "btn btn-outline-secondary" %>

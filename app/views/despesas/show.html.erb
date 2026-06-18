@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card mb-4">
     <div class="card-body">
       <dl class="row mb-0">
         <dt class="col-sm-4">Categoria</dt>
@@ -27,18 +27,52 @@
         <dt class="col-sm-4">Vencimento</dt>
         <dd class="col-sm-8"><%= @despesa.vencimento.strftime("%d/%m/%Y") %></dd>
 
-        <dt class="col-sm-4">Valor por morador ativo</dt>
+        <dt class="col-sm-4">Valor por morador</dt>
         <dd class="col-sm-8">
-          <% if @despesa.valor_por_morador %>
-            <%= number_to_currency(@despesa.valor_por_morador) %>
-            <span class="text-muted small">(<%= @republica.residents.active.count %> morador(es))</span>
+          <% if @despesa.valor_efetivo_por_morador %>
+            <%= number_to_currency(@despesa.valor_efetivo_por_morador) %>
+            <span class="text-muted small">(<%= @despesa.moradores_na_despesa %> morador(es))</span>
           <% else %>
-            <span class="text-muted">Cadastre moradores ativos para calcular a divisão.</span>
+            <span class="text-muted">Cadastre moradores para calcular a divisão.</span>
           <% end %>
         </dd>
       </dl>
     </div>
   </div>
+
+  <% if @despesa.pagamentos.any? %>
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Divisão entre moradores</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Morador</th>
+              <th>Valor</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @despesa.pagamentos.includes(:resident).order("residents.name").each do |pagamento| %>
+              <tr>
+                <td><%= pagamento.resident.name %></td>
+                <td><%= number_to_currency(pagamento.valor) %></td>
+                <td>
+                  <% if pagamento.paid? %>
+                    <span class="badge bg-success">Pago</span>
+                  <% else %>
+                    <span class="badge bg-warning">Pendente</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
 
   <p class="mt-4 mb-0">
     <%= link_to "← Lista de despesas", republica_despesas_path(@republica), class: "link-secondary" %>
