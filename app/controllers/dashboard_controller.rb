@@ -21,8 +21,9 @@ class DashboardController < ApplicationController
     @current_month_expenses = @despesas.where(vencimento: month_range)
     @current_month_expenses_total = @current_month_expenses.sum(:valor)
     @registered_expenses_total = @despesas.sum(:valor)
-    @paid_payments_total = Pagamento.where(despesa: @current_month_expenses).sum(:valor)
-    @pending_payments_total = [ @current_month_expenses_total - @paid_payments_total, 0.to_d ].max
+    month_payments = Pagamento.where(despesa: @current_month_expenses)
+    @paid_payments_total = month_payments.paid.sum(:valor)
+    @pending_payments_total = month_payments.pending.sum(:valor)
     @recent_expenses = @despesas.order(vencimento: :desc, created_at: :desc).limit(5)
     @total_por_morador = total_por_morador(@despesas, @residents)
   end

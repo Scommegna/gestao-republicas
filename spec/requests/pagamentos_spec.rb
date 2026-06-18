@@ -30,6 +30,21 @@ RSpec.describe "Pagamentos", type: :request do
       expect(response.body).to include("Pendente")
     end
 
+    it "separa totais pagos e pendentes pelo status do pagamento" do
+      pagamento_ana = despesa.pagamentos.find_by(resident: ana)
+      pagamento_bia = despesa.pagamentos.find_by(resident: bia)
+      pagamento_ana.update!(status: :paid)
+
+      sign_in user
+      get republica_pagamentos_path(republica, month: Date.current.month, year: Date.current.year)
+
+      expect(response.body).to include("Total pago")
+      expect(response.body).to include("Total pendente")
+      expect(response.body.scan(/\$100\.00/).size).to be >= 3
+      expect(pagamento_ana.reload).to be_paid
+      expect(pagamento_bia.reload).to be_pending
+    end
+
     it "filtra despesas por mês e não exibe dados de outras repúblicas" do
       create(:despesa, republica: republica, descricao: "Conta julho", valor: 200, vencimento: 1.month.from_now.to_date)
       create(:resident, name: "Morador externo")
