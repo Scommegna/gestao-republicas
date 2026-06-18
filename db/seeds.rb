@@ -11,9 +11,10 @@ abort "Seeds só rodam em development." unless Rails.env.development?
 
 puts "== Carregando seeds de demonstração =="
 
-demo = User.find_or_initialize_by(email: "demo@example.com")
-if demo.new_record?
-  demo.assign_attributes(
+demo = User.find_by(email: "demo@example.com") || User.find_by(document: "12345678901")
+unless demo
+  demo = User.create!(
+    email: "demo@example.com",
     first_name: "Demo",
     last_name: "Admin",
     document: "12345678901",
@@ -22,10 +23,17 @@ if demo.new_record?
     password: "123456",
     password_confirmation: "123456"
   )
-  demo.save!
   puts "  Usuário demo criado (#{demo.email})"
 else
-  puts "  Usuário demo já existe (#{demo.email})"
+  demo.update!(
+    email: "demo@example.com",
+    first_name: "Demo",
+    last_name: "Admin",
+    phone: "35999998888",
+    password: "123456",
+    password_confirmation: "123456"
+  )
+  puts "  Usuário demo atualizado (#{demo.email})"
 end
 
 republica = demo.republicas.find_or_initialize_by(name: "República Demo UFLA")
