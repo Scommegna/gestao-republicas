@@ -26,10 +26,6 @@
       </ul>
 
       <div class="d-flex align-items-center gap-1">
-        <%= link_to "#", class: "icon-btn", title: "Configurações", aria: { label: "Configurações" } do %>
-          <i class="bi bi-gear" aria-hidden="true"></i>
-        <% end %>
-
         <div class="dropdown">
           <button class="btn p-0 border-0 d-flex align-items-center gap-2" type="button"
                   data-bs-toggle="dropdown" aria-expanded="false" title="Perfil">
@@ -45,9 +41,6 @@
             <li><hr class="dropdown-divider"></li>
             <li><%= link_to edit_user_registration_path, class: "dropdown-item" do %>
               <i class="bi bi-person me-2" aria-hidden="true"></i>Perfil
-            <% end %></li>
-            <li><%= link_to "#", class: "dropdown-item" do %>
-              <i class="bi bi-gear me-2" aria-hidden="true"></i>Configurações
             <% end %></li>
             <li><hr class="dropdown-divider"></li>
             <li>
