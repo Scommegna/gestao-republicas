@@ -62,7 +62,7 @@ class PagamentosController < ApplicationController
 
     @payment_rows = @residents.map do |resident|
       devido = @despesas.sum { |despesa| despesa.valor_por_morador || 0.to_d }
-      pago = @pagamentos.select { |pagamento| pagamento.resident_id == resident.id }.sum(&:valor)
+      pago = @pagamentos.select { |pagamento| pagamento.resident_id == resident.id && pagamento.paid? }.sum(&:valor)
       pendente = [ devido - pago, 0.to_d ].max
 
       {

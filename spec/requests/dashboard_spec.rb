@@ -43,6 +43,8 @@ RSpec.describe "Dashboard", type: :request do
       # Total de despesas do mês atual: aluguel 1000 + internet 150 = 1150
       # Total pago: Ana (500 aluguel) + Bia e Ana (75 cada internet) = 500 + 75 + 75 = 650
       # Total pendente: Bia aluguel (500) = 500
+      expect(response.body).to include("$650.00")
+      expect(response.body).to include("$500.00")
       expect(response.body).to include("Moradores ativos")
       expect(response.body).to include(">2</p>")
       expect(response.body).not_to include("Despesa de outra casa")
