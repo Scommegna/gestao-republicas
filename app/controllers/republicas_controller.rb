@@ -6,7 +6,57 @@ class RepublicasController < ApplicationController
     @republicas = current_user.republicas.order(:name)
   end
 
+  # Vitrine de todas as repúblicas, com busca, para o usuário encontrar e entrar.
+  def explore
+    @republicas = Republica.includes(:residents).order(:name)
+
+    if params[:q].present?
+      term = "%#{params[:q].strip}%"
+      @republicas = @republicas.where("name LIKE :q OR endereco LIKE :q", q: term)
+    end
+
+    @participating_ids = current_user.republica_ids | current_user.member_republica_ids
+  end
+
+  # Entrar em uma república como morador (membro).
+  def join
+    republica = Republica.find(params[:id])
+
+    if current_user.participating?(republica)
+      return redirect_to dashboard_path, notice: "Você já participa desta república."
+    end
+
+    resident = republica.residents.build(
+      user: current_user,
+      name: "#{current_user.first_name} #{current_user.last_name}".strip,
+      email: current_user.email,
+      active: true
+    )
+
+    if resident.save
+      redirect_to dashboard_path(republica_id: republica.id), notice: "Bem-vindo(a) à #{republica.name}!"
+    else
+      redirect_to explore_republicas_path, alert: resident.errors.full_messages.to_sentence
+    end
+  end
+
+  # Sair de uma república em que o usuário participa como membro.
+  def leave
+    republica = Republica.find(params[:id])
+    current_user.resident_profiles.find_by(republica: republica)&.destroy
+    redirect_to explore_republicas_path, notice: "Você saiu da #{republica.name}."
+  end
+
   def show
+    @despesas = @republica.despesas
+    month_range = Date.current.all_month
+    @current_month_expenses = @despesas.where(vencimento: month_range)
+    @current_month_expenses_total = @current_month_expenses.sum(:valor)
+    @registered_expenses_total = @despesas.sum(:valor)
+    @active_residents_count = @republica.residents.active.count
+    @paid_payments_total = Pagamento.where(despesa: @current_month_expenses).sum(:valor)
+    @pending_payments_total = [ @current_month_expenses_total - @paid_payments_total, 0.to_d ].max
+    @recent_expenses = @despesas.order(vencimento: :desc, created_at: :desc).limit(5)
   end
 
   def new
@@ -46,6 +96,6 @@ class RepublicasController < ApplicationController
   end
 
   def republica_params
-    params.require(:republica).permit(:name, :endereco, :descricao)
+    params.require(:republica).permit(:name, :endereco, :descricao, :tipo)
   end
 end

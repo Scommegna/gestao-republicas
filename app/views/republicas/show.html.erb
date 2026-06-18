@@ -1,33 +1,180 @@
 <% content_for :title, @republica.name %>
 
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-    <div>
-      <h1 class="h3 mb-1"><%= @republica.name %></h1>
-      <% if @republica.endereco.present? %>
-        <p class="text-muted mb-0"><%= @republica.endereco %></p>
-      <% end %>
+<div class="container py-4 py-lg-5">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div class="d-flex gap-3 align-items-start">
+      <div class="republica-hero-icon flex-shrink-0">
+        <i class="bi bi-house-door fs-4" aria-hidden="true"></i>
+      </div>
+      <div>
+        <p class="text-muted small mb-1">
+          <%= link_to "Dashboard", authenticated_root_path, class: "link-secondary text-decoration-none" %>
+          <span class="mx-1">/</span>
+          <%= link_to "Repúblicas", republicas_path, class: "link-secondary text-decoration-none" %>
+        </p>
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+          <h1 class="h3 mb-0"><%= @republica.name %></h1>
+          <%= tipo_badge(@republica) %>
+        </div>
+        <% if @republica.endereco.present? %>
+          <p class="text-muted mb-0">
+            <i class="bi bi-geo-alt me-1" aria-hidden="true"></i>
+            <%= @republica.endereco %>
+          </p>
+        <% end %>
+      </div>
     </div>
-    <div class="btn-group">
-      <%= link_to "Editar", edit_republica_path(@republica), class: "btn btn-outline-primary btn-sm" %>
-      <%= button_to "Excluir", republica_path(@republica), method: :delete, class: "btn btn-outline-danger btn-sm",
-            form: { data: { turbo_confirm: "Tem certeza que deseja excluir esta república?" } } %>
+
+    <div class="d-flex flex-wrap gap-2">
+      <%= link_to edit_republica_path(@republica), class: "btn btn-outline-primary btn-sm" do %>
+        <i class="bi bi-pencil me-1" aria-hidden="true"></i>
+        Editar
+      <% end %>
+      <%= button_to republica_path(@republica), method: :delete, class: "btn btn-outline-danger btn-sm",
+            form: { data: { turbo_confirm: "Tem certeza que deseja excluir esta república?" } } do %>
+        <i class="bi bi-trash me-1" aria-hidden="true"></i>
+        Excluir
+      <% end %>
     </div>
   </div>
 
   <% if @republica.descricao.present? %>
     <div class="card mb-4">
       <div class="card-body">
-        <h2 class="h6 text-muted">Descrição</h2>
-        <p class="card-text mb-0"><%= simple_format(@republica.descricao) %></p>
+        <h2 class="h6 text-muted mb-2">
+          <i class="bi bi-card-text me-1" aria-hidden="true"></i>
+          Sobre a república
+        </h2>
+        <p class="mb-0"><%= simple_format(@republica.descricao) %></p>
       </div>
     </div>
   <% end %>
 
-  <div class="d-flex flex-wrap gap-2 mt-3">
-    <%= link_to "Moradores", republica_residents_path(@republica), class: "btn btn-info" %>
-    <%= link_to "Despesas", republica_despesas_path(@republica), class: "btn btn-primary" %>
-    <%= link_to "Pagamentos", republica_pagamentos_path(@republica), class: "btn btn-success" %>
-    <%= link_to "← Lista de repúblicas", republicas_path, class: "btn btn-secondary" %>
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card stat-card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Despesas do mês</h2>
+            <i class="bi bi-calendar3 text-success" aria-hidden="true"></i>
+          </div>
+          <p class="h4 mb-0"><%= number_to_currency(@current_month_expenses_total) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card stat-card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Total cadastrado</h2>
+            <i class="bi bi-cash-stack text-primary" aria-hidden="true"></i>
+          </div>
+          <p class="h4 mb-0"><%= number_to_currency(@registered_expenses_total) %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card stat-card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Moradores ativos</h2>
+            <i class="bi bi-people text-info" aria-hidden="true"></i>
+          </div>
+          <p class="h4 mb-0"><%= @active_residents_count %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card stat-card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h6 text-muted mb-0">Pagamentos</h2>
+            <i class="bi bi-receipt text-warning" aria-hidden="true"></i>
+          </div>
+          <p class="mb-1"><span class="fw-semibold"><%= number_to_currency(@pending_payments_total) %></span> pendente</p>
+          <p class="mb-0"><span class="fw-semibold"><%= number_to_currency(@paid_payments_total) %></span> pago</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Ações rápidas</h2>
+          <div class="d-grid gap-2">
+            <%= link_to republica_residents_path(@republica), class: "btn btn-primary text-start" do %>
+              <i class="bi bi-people me-2" aria-hidden="true"></i>
+              Moradores
+            <% end %>
+            <%= link_to republica_despesas_path(@republica), class: "btn btn-success text-start" do %>
+              <i class="bi bi-receipt me-2" aria-hidden="true"></i>
+              Despesas
+            <% end %>
+            <%= link_to republica_pagamentos_path(@republica), class: "btn btn-outline-success text-start" do %>
+              <i class="bi bi-check2-square me-2" aria-hidden="true"></i>
+              Pagamentos
+            <% end %>
+            <%= link_to new_republica_despesa_path(@republica), class: "btn btn-outline-primary text-start" do %>
+              <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>
+              Nova despesa
+            <% end %>
+            <%= link_to new_republica_resident_path(@republica), class: "btn btn-outline-secondary text-start" do %>
+              <i class="bi bi-person-plus me-2" aria-hidden="true"></i>
+              Novo morador
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-8">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h2 class="h5 mb-0">Despesas recentes</h2>
+            <%= link_to republica_despesas_path(@republica), class: "link-secondary text-decoration-none" do %>
+              Ver todas <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            <% end %>
+          </div>
+
+          <% if @recent_expenses.any? %>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Vencimento</th>
+                    <th class="text-end">Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @recent_expenses.each do |despesa| %>
+                    <tr>
+                      <td>
+                        <%= link_to despesa.descricao, republica_despesa_path(@republica, despesa), class: "link-dark fw-medium text-decoration-none" %>
+                      </td>
+                      <td><span class="badge text-bg-light border"><%= despesa.categoria_label %></span></td>
+                      <td><%= despesa.vencimento.strftime("%d/%m/%Y") %></td>
+                      <td class="text-end"><%= number_to_currency(despesa.valor) %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="alert alert-light border mb-0">
+              Nenhuma despesa cadastrada ainda.
+              <%= link_to "Cadastrar a primeira", new_republica_despesa_path(@republica), class: "alert-link" %>.
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

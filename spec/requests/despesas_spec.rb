@@ -76,6 +76,29 @@ RSpec.describe "Despesas", type: :request do
       end.to change(Despesa, :count).by(-1)
     end
 
+    it "cria despesa com seleção específica de moradores" do
+      resident1 = create(:resident, republica: republica, active: true, name: "João")
+      resident2 = create(:resident, republica: republica, active: true, name: "Maria")
+      resident3 = create(:resident, republica: republica, active: true, name: "Carlos")
+
+      expect do
+        post republica_despesas_path(republica), params: {
+          despesa: {
+            descricao: "Compras coletivas",
+            valor: "300",
+            vencimento: "2026-06-10",
+            categoria: "compras",
+            resident_ids: [ resident1.id, resident2.id ]
+          }
+        }
+      end.to change(Despesa, :count).by(1)
+
+      despesa = Despesa.order(:created_at).last
+      expect(despesa.pagamentos.count).to eq(2)
+      expect(despesa.pagamentos.pluck(:valor).uniq).to eq([ 150.0 ])
+      expect(despesa.pagamentos.map(&:resident).map(&:name)).to match_array([ "João", "Maria" ])
+    end
+
     it "não cria despesa inválida" do
       expect do
         post republica_despesas_path(republica), params: {

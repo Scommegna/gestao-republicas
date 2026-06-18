@@ -16,6 +16,13 @@
   </div>
 
   <div class="mb-3">
+    <%= f.label :tipo, "Tipo", class: "form-label" %>
+    <%= f.select :tipo,
+          Republica::TIPOS.map { |t| [ Republica::TIPO_LABELS[t], t ] },
+          {}, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
     <%= f.label :endereco, "Endereço", class: "form-label" %>
     <%= f.text_field :endereco, class: "form-control", placeholder: "Opcional" %>
   </div>
