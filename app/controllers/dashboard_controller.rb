@@ -4,17 +4,34 @@ class DashboardController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @republicas = current_user.republicas.order(:name)
-    @primary_republica = @republicas.first
-    @despesas = Despesa.where(republica: @republicas)
+    @republicas = current_user.participating_republicas
+
+    # Sem nenhuma república (própria ou em que participe): vai para a vitrine.
+    return redirect_to explore_republicas_path if @republicas.empty?
+
+    @republica = @republicas.find_by(id: params[:republica_id]) || @republicas.first
+    @primary_republica = @republica
+    @is_owner = @republica.user_id == current_user.id
+
+    @residents = @republica.residents.active.order(:name)
+    @active_residents_count = @residents.size
+    @despesas = @republica.despesas
 
     month_range = Date.current.all_month
     @current_month_expenses = @despesas.where(vencimento: month_range)
     @current_month_expenses_total = @current_month_expenses.sum(:valor)
     @registered_expenses_total = @despesas.sum(:valor)
-    @active_residents_count = Resident.where(republica: @republicas).active.count
     @paid_payments_total = Pagamento.where(despesa: @current_month_expenses).sum(:valor)
     @pending_payments_total = [ @current_month_expenses_total - @paid_payments_total, 0.to_d ].max
-    @recent_expenses = @despesas.includes(:republica).order(vencimento: :desc, created_at: :desc).limit(5)
+    @recent_expenses = @despesas.order(vencimento: :desc, created_at: :desc).limit(5)
+    @total_por_morador = total_por_morador(@despesas, @residents)
+  end
+
+  private
+
+  # Total devido por cada morador somando suas cotas (pagamentos) em todas as despesas.
+  def total_por_morador(despesas, residents)
+    somas = Pagamento.where(despesa: despesas, resident: residents).group(:resident_id).sum(:valor)
+    residents.each_with_object({}) { |r, h| h[r.id] = somas[r.id] || 0.to_d }
   end
 end

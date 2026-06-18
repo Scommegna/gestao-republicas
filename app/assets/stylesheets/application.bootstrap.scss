@@ -1,2 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+// ── Identidade visual (mesma paleta da tela de login) ───────────────────────
+$verde:      #2D6A4F;
+$verde-md:   #40916C;
+$verde-lt:   #B7E4C7;
+$creme:      #F8F4EE;
+$texto:      #1A1A1A;
+$cinza:      #6B7280;
+
+// ── Overrides do Bootstrap (precisam vir antes do import) ───────────────────
+$primary:                 $verde;
+$body-bg:                 $creme;
+$body-color:              $texto;
+$font-family-sans-serif:  'DM Sans', system-ui, -apple-system, sans-serif;
+$headings-font-family:    'Fraunces', Georgia, serif;
+$headings-font-weight:    500;
+
+$border-radius:        .65rem;
+$border-radius-sm:     .5rem;
+$border-radius-lg:     1rem;
+$card-border-color:    rgba(0, 0, 0, .06);
+$card-border-radius:   1rem;
+$card-cap-bg:          transparent;
+$link-decoration:      none;
+
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
+
+// ── Base ────────────────────────────────────────────────────────────────────
+body {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 8% 0%,  rgba(45, 106, 79, .06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 95% 100%, rgba(64, 145, 108, .05) 0%, transparent 70%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+// ── Navbar global ────────────────────────────────────────────────────────────
+.app-navbar {
+  background: rgba(255, 255, 255, .85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, .06);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, .04);
+
+  .navbar-brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: $verde;
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+  }
+
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: $verde;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    box-shadow: 0 2px 8px rgba(45, 106, 79, .25);
+  }
+
+  .nav-link {
+    color: $cinza;
+    font-weight: 500;
+    border-radius: .5rem;
+    padding: .4rem .75rem;
+
+    &:hover, &:focus { color: $verde; }
+    &.active { color: $verde; background: rgba(45, 106, 79, .08); }
+    i { margin-right: .35rem; }
+  }
+
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: $cinza;
+    border: none;
+    background: transparent;
+    font-size: 1.15rem;
+    transition: background .15s, color .15s;
+
+    &:hover, &:focus { background: rgba(45, 106, 79, .1); color: $verde; }
+  }
+
+  .avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: $verde-lt;
+    color: $verde;
+    font-weight: 600;
+    font-size: .9rem;
+  }
+}
+
+// ── Cards / componentes ──────────────────────────────────────────────────────
+.card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04), 0 6px 24px rgba(0, 0, 0, .05);
+}
+
+.btn { font-weight: 500; }
+.btn-primary { box-shadow: 0 2px 8px rgba(45, 106, 79, .2); }

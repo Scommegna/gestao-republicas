@@ -1,0 +1,81 @@
+<% content_for :title, "Repúblicas" %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1">Repúblicas</h1>
+      <p class="text-muted mb-0">Encontre uma república para participar ou crie a sua.</p>
+    </div>
+    <%= link_to new_republica_path, class: "btn btn-primary" do %>
+      <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Criar república
+    <% end %>
+  </div>
+
+  <%= form_with url: explore_republicas_path, method: :get, class: "mb-4" do %>
+    <div class="input-group">
+      <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted" aria-hidden="true"></i></span>
+      <%= text_field_tag :q, params[:q], class: "form-control border-start-0 ps-0",
+            placeholder: "Buscar por nome ou endereço…", autofocus: true %>
+      <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+      <% if params[:q].present? %>
+        <%= link_to "Limpar", explore_republicas_path, class: "btn btn-outline-secondary" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @republicas.any? %>
+    <div class="row g-3">
+      <% @republicas.each do |rep| %>
+        <% owner = rep.user_id == current_user.id %>
+        <% member = @participating_ids.include?(rep.id) && !owner %>
+        <div class="col-12 col-md-6 col-xl-4">
+          <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h2 class="h5 mb-0"><%= rep.name %></h2>
+                <%= tipo_badge(rep) %>
+              </div>
+
+              <% if rep.endereco.present? %>
+                <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1" aria-hidden="true"></i><%= rep.endereco %></p>
+              <% end %>
+
+              <p class="text-muted small mb-3">
+                <i class="bi bi-people me-1" aria-hidden="true"></i>
+                <%= pluralize(rep.residents.select(&:active).size, "morador", plural: "moradores") %>
+              </p>
+
+              <div class="mt-auto d-flex flex-wrap gap-2">
+                <% if owner %>
+                  <span class="badge text-bg-success align-self-center"><i class="bi bi-key me-1" aria-hidden="true"></i>Sua república</span>
+                  <%= link_to "Gerenciar", republica_path(rep), class: "btn btn-sm btn-outline-secondary ms-auto" %>
+                <% elsif member %>
+                  <span class="badge text-bg-info align-self-center"><i class="bi bi-check2 me-1" aria-hidden="true"></i>Você participa</span>
+                  <%= link_to "Abrir painel", dashboard_path(republica_id: rep.id), class: "btn btn-sm btn-primary ms-auto" %>
+                  <%= button_to "Sair", leave_republica_path(rep), method: :delete,
+                        class: "btn btn-sm btn-outline-danger",
+                        form: { data: { turbo_confirm: "Sair da #{rep.name}?" } } %>
+                <% else %>
+                  <%= button_to join_republica_path(rep), method: :post, class: "btn btn-sm btn-success w-100" do %>
+                    <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Entrar nesta república
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-light border text-center py-5">
+      <i class="bi bi-search fs-1 text-muted d-block mb-2" aria-hidden="true"></i>
+      <% if params[:q].present? %>
+        Nenhuma república encontrada para "<strong><%= params[:q] %></strong>".
+        <%= link_to "Ver todas", explore_republicas_path, class: "alert-link" %>.
+      <% else %>
+        Nenhuma república cadastrada ainda.
+        <%= link_to "Crie a primeira", new_republica_path, class: "alert-link" %>.
+      <% end %>
+    </div>
+  <% end %>
+</div>

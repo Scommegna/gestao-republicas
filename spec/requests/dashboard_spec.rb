@@ -48,15 +48,23 @@ RSpec.describe "Dashboard", type: :request do
       expect(response.body).not_to include("Despesa de outra casa")
     end
 
-    it "carrega o dashboard sem dados cadastrados" do
+    it "redireciona para a vitrine quando o usuário não participa de nenhuma república" do
+      sign_in user
+      get dashboard_path
+
+      expect(response).to redirect_to(explore_republicas_path)
+    end
+
+    it "exibe o dashboard de uma república em que o usuário participa como membro" do
+      republica = create(:republica, name: "República Vizinha")
+      create(:resident, republica: republica, user: user, active: true)
+
       sign_in user
       get dashboard_path
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include("Nenhuma república cadastrada ainda")
-      expect(response.body).to include("$0.00")
-      expect(response.body).to include("$0.00</span> pendente")
-      expect(response.body).to include("$0.00</span> pago")
+      expect(response.body).to include("República Vizinha")
+      expect(response.body).to include("Você participa")
     end
 
     it "exibe mensagem apropriada quando a república ainda não tem moradores nem despesas" do
@@ -83,12 +91,21 @@ RSpec.describe "Dashboard", type: :request do
   end
 
   describe "GET /" do
-    it "usa o dashboard como tela inicial do usuário autenticado" do
+    it "usa o dashboard como tela inicial do usuário com república" do
+      create(:republica, user: user)
+
       sign_in user
       get "/"
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include("Resumo financeiro")
+    end
+
+    it "leva o usuário sem república para a vitrine" do
+      sign_in user
+      get "/"
+
+      expect(response).to redirect_to(explore_republicas_path)
     end
   end
 end

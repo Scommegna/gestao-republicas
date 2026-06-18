@@ -5,6 +5,7 @@ RSpec.describe "Sessions", type: :request do
 
   describe "POST /login" do
     it "signs in and redirects to the dashboard" do
+      create(:republica, user: user)
       post user_session_path, params: {
         user: { email: user.email, password: "123456" }
       }

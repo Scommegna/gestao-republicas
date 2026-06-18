@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_13_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_204731) do
   create_table "despesas", force: :cascade do |t|
     t.string "categoria", null: false
     t.datetime "created_at", null: false
@@ -41,6 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_190000) do
     t.text "descricao"
     t.string "endereco"
     t.string "name", null: false
+    t.string "tipo", default: "mista", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_republicas_on_user_id"
@@ -54,7 +55,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_190000) do
     t.string "phone"
     t.integer "republica_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["republica_id"], name: "index_residents_on_republica_id"
+    t.index ["user_id", "republica_id"], name: "index_residents_on_user_id_and_republica_id", unique: true
+    t.index ["user_id"], name: "index_residents_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -83,4 +87,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_13_190000) do
   add_foreign_key "pagamentos", "residents"
   add_foreign_key "republicas", "users"
   add_foreign_key "residents", "republicas"
+  add_foreign_key "residents", "users"
 end
