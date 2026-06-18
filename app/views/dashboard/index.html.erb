@@ -1,18 +1,39 @@
 <% content_for :title, "Dashboard administrativo" %>
 
 <div class="container py-4">
-  <div class="mb-4">
-    <p class="text-muted small mb-1">Painel administrativo</p>
-    <h1 class="h3 mb-1">Resumo financeiro</h1>
-    <p class="text-muted mb-0">Acompanhe despesas, moradores e pagamentos das suas repúblicas.</p>
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div>
+      <p class="text-muted small mb-1">Painel da república</p>
+      <h1 class="h3 mb-1">Resumo financeiro</h1>
+      <div class="d-flex align-items-center gap-2">
+        <span class="h5 mb-0"><%= @republica.name %></span>
+        <%= tipo_badge(@republica) %>
+        <% unless @is_owner %>
+          <span class="badge text-bg-info"><i class="bi bi-person-check me-1" aria-hidden="true"></i>Você participa</span>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @republicas.size > 1 %>
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i>Trocar república
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <% @republicas.each do |rep| %>
+            <li>
+              <%= link_to dashboard_path(republica_id: rep.id),
+                    class: "dropdown-item #{'active' if rep.id == @republica.id}" do %>
+                <%= rep.name %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
   </div>
 
-  <% if @republicas.none? %>
-    <div class="alert alert-info">
-      Nenhuma república cadastrada ainda.
-      <%= link_to "Cadastre uma república para iniciar o controle financeiro", new_republica_path, class: "alert-link" %>.
-    </div>
-  <% elsif @despesas.none? && @active_residents_count.zero? %>
+  <% if @despesas.none? && @active_residents_count.zero? %>
     <div class="alert alert-info">
       Nenhum dado financeiro cadastrado ainda. Use os atalhos para registrar moradores e despesas.
     </div>
@@ -71,14 +92,9 @@
 
   <div class="row g-4">
     <div class="col-12 col-lg-4">
-      <h2 class="h5 mb-3">Atalhos</h2>
-      <div class="d-grid gap-2">
-        <%= link_to new_republica_path, class: "btn btn-outline-secondary text-start" do %>
-          <i class="bi bi-house-add me-1" aria-hidden="true"></i>
-          Nova república
-        <% end %>
-
-        <% if @primary_republica %>
+      <% if @is_owner %>
+        <h2 class="h5 mb-3">Atalhos</h2>
+        <div class="d-grid gap-2 mb-4">
           <%= link_to new_republica_despesa_path(@primary_republica), class: "btn btn-success text-start" do %>
             <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
             Registrar despesa
@@ -91,14 +107,51 @@
             <i class="bi bi-check2-square me-1" aria-hidden="true"></i>
             Registrar pagamento
           <% end %>
-        <% end %>
+          <%= link_to republica_path(@primary_republica), class: "btn btn-outline-secondary text-start" do %>
+            <i class="bi bi-gear me-1" aria-hidden="true"></i>
+            Gerenciar república
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="card mb-4">
+        <div class="card-header bg-transparent d-flex align-items-center justify-content-between">
+          <h2 class="h6 mb-0"><i class="bi bi-people me-2" aria-hidden="true"></i>Participantes</h2>
+          <span class="badge text-bg-light"><%= @residents.size %></span>
+        </div>
+        <ul class="list-group list-group-flush">
+          <% if @residents.any? %>
+            <% @residents.each do |resident| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <%= resident.name %>
+                  <% if resident.user_id == current_user.id %>
+                    <span class="badge text-bg-secondary ms-1">você</span>
+                  <% end %>
+                </span>
+                <span class="text-muted small">Deve <%= number_to_currency(@total_por_morador[resident.id] || 0) %></span>
+              </li>
+            <% end %>
+          <% else %>
+            <li class="list-group-item text-muted">Nenhum morador ativo ainda.</li>
+          <% end %>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header bg-transparent">
+          <h2 class="h6 mb-0"><i class="bi bi-megaphone me-2" aria-hidden="true"></i>Avisos</h2>
+        </div>
+        <div class="card-body text-muted small">
+          Nenhum aviso no momento. Em breve você poderá publicar avisos para a república.
+        </div>
       </div>
     </div>
 
     <div class="col-12 col-lg-8">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h2 class="h5 mb-0">Despesas recentes</h2>
-        <%= link_to "Ver repúblicas", republicas_path, class: "link-secondary" %>
+        <h2 class="h5 mb-0">Contas recentes</h2>
+        <%= link_to "Ver todas as despesas", republica_despesas_path(@republica), class: "link-secondary" %>
       </div>
 
       <% if @recent_expenses.any? %>
@@ -107,18 +160,24 @@
             <thead>
               <tr>
                 <th>Descrição</th>
-                <th>República</th>
                 <th>Vencimento</th>
                 <th class="text-end">Valor</th>
+                <th class="text-end">Por morador</th>
               </tr>
             </thead>
             <tbody>
               <% @recent_expenses.each do |despesa| %>
                 <tr>
-                  <td><%= link_to despesa.descricao, republica_despesa_path(despesa.republica, despesa), class: "link-dark" %></td>
-                  <td><%= despesa.republica.name %></td>
+                  <td><%= link_to despesa.descricao, republica_despesa_path(@republica, despesa), class: "link-dark" %></td>
                   <td><%= despesa.vencimento.strftime("%d/%m/%Y") %></td>
                   <td class="text-end"><%= number_to_currency(despesa.valor) %></td>
+                  <td class="text-end">
+                    <% if despesa.valor_por_morador %>
+                      <%= number_to_currency(despesa.valor_por_morador) %>
+                    <% else %>
+                      <span class="text-muted">—</span>
+                    <% end %>
+                  </td>
                 </tr>
               <% end %>
             </tbody>

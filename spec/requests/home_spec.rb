@@ -23,7 +23,9 @@ RSpec.describe "Home", type: :request do
   describe "GET / (root)" do
     context "when signed in" do
       it "shows the administrative dashboard" do
-        sign_in create(:user)
+        user = create(:user)
+        create(:republica, user: user)
+        sign_in user
         get "/"
 
         expect(response).to have_http_status(:success)
